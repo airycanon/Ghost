@@ -7,13 +7,13 @@ export default BaseValidator.create({
         let name = model.get('name');
 
         if (validator.empty(name)) {
-            model.get('errors').add('name', 'You must specify a name for the tag.');
+            model.get('errors').add('name', '请填写标签名称');
             this.invalidate();
         } else if (name.match(/^,/)) {
-            model.get('errors').add('name', 'Tag names can\'t start with commas.');
+            model.get('errors').add('name', '标签名称不能以逗号开头。');
             this.invalidate();
         } else if (!validator.isLength(name, 0, 150)) {
-            model.get('errors').add('name', 'Tag names cannot be longer than 150 characters.');
+            model.get('errors').add('name', '标签名称不能超过150字符。');
             this.invalidate();
         }
     },
@@ -22,7 +22,7 @@ export default BaseValidator.create({
         let slug = model.get('slug');
 
         if (!validator.isLength(slug, 0, 150)) {
-            model.get('errors').add('slug', 'URL cannot be longer than 150 characters.');
+            model.get('errors').add('slug', '链接不能超过150字符。');
             this.invalidate();
         }
     },
@@ -31,7 +31,7 @@ export default BaseValidator.create({
         let description = model.get('description');
 
         if (!validator.isLength(description, 0, 200)) {
-            model.get('errors').add('description', 'Description cannot be longer than 200 characters.');
+            model.get('errors').add('description', '简介不能超过200字符。');
             this.invalidate();
         }
     },
@@ -40,7 +40,7 @@ export default BaseValidator.create({
         let metaTitle = model.get('meta_title');
 
         if (!validator.isLength(metaTitle, 0, 150)) {
-            model.get('errors').add('meta_title', 'Meta Title cannot be longer than 150 characters.');
+            model.get('errors').add('meta_title', 'Meta 标题不能超过150字符。');
             this.invalidate();
         }
     },
@@ -49,7 +49,7 @@ export default BaseValidator.create({
         let metaDescription = model.get('meta_description');
 
         if (!validator.isLength(metaDescription, 0, 200)) {
-            model.get('errors').add('meta_description', 'Meta Description cannot be longer than 200 characters.');
+            model.get('errors').add('meta_description', 'Meta 简介不能超过200字符。');
             this.invalidate();
         }
     }

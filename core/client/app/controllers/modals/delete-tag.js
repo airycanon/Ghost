@@ -7,7 +7,7 @@ export default Controller.extend({
     notifications: inject.service(),
 
     postInflection: computed('model.count.posts', function () {
-        return this.get('model.count.posts') > 1 ? 'posts' : 'post';
+        return this.get('model.count.posts') > 1 ? '博文' : '博文';
     }),
 
     actions: {
@@ -34,11 +34,11 @@ export default Controller.extend({
 
     confirm: {
         accept: {
-            text: 'Delete',
+            text: '确认删除',
             buttonClass: 'btn btn-red'
         },
         reject: {
-            text: 'Cancel',
+            text: '取消操作',
             buttonClass: 'btn btn-default btn-minor'
         }
     }

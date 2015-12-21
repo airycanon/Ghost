@@ -10,11 +10,11 @@ export default Controller.extend({
 
     confirm: {
         accept: {
-            text: 'Leave',
+            text: '确认',
             buttonClass: 'btn btn-red'
         },
         reject: {
-            text: 'Stay',
+            text: '取消',
             buttonClass: 'btn btn-default btn-minor'
         }
     },
@@ -33,7 +33,7 @@ export default Controller.extend({
             }
 
             if (!transition || !editorController) {
-                this.get('notifications').showNotification('Sorry, there was an error in the application. Please let the Ghost team know what happened.', {type: 'error'});
+                this.get('notifications').showNotification('对不起, 应用程序出错了，请联系 Ghost 团队。', {type: 'error'});
 
                 return true;
             }

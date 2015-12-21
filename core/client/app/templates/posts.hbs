@@ -1,8 +1,8 @@
 {{#gh-content-view-container as |container|}}
 <header class="view-header">
-    {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>Content</span>{{/gh-view-title}}
+    {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>内容</span>{{/gh-view-title}}
     <section class="view-actions">
-        {{#link-to "editor.new" class="btn btn-green" title="New Post"}}New Post{{/link-to}}
+        {{#link-to "editor.new" class="btn btn-green" title="新建博文"}}新建博文{{/link-to}}
     </section>
 </header>
 
@@ -12,7 +12,7 @@
             <ol class="posts-list">
                 {{#each sortedPosts key="id" as |post|}}
                     {{#gh-posts-list-item post=post active=(is-equal post currentPost) onDoubleClick="openEditor" previewIsHidden=container.previewIsHidden as |component|}}
-                        {{#link-to component.viewOrEdit post.id class="permalink" title="Edit this post"}}
+                        {{#link-to component.viewOrEdit post.id class="permalink" title="编辑博文"}}
                             <h3 class="entry-title">{{post.title}}</h3>
                             <section class="entry-meta">
                                 <span class="avatar" style={{component.authorAvatarBackground}}>
@@ -22,14 +22,14 @@
                                 <span class="status">
                                     {{#if component.isPublished}}
                                         {{#if post.page}}
-                                            <span class="page">Page</span>
+                                            <span class="page">页面</span>
                                         {{else}}
                                             <time datetime="{{post.published_at}}" class="date published">
-                                                Published {{gh-format-timeago post.published_at}}
+                                                发布于 {{gh-format-timeago post.published_at}}
                                             </time>
                                         {{/if}}
                                     {{else}}
-                                        <span class="draft">Draft</span>
+                                        <span class="draft">草稿</span>
                                     {{/if}}
                                 </span>
                             </section>

@@ -69,7 +69,7 @@ export default Mixin.create({
     }),
 
     postOrPage: computed('model.page', function () {
-        return this.get('model.page') ? 'Page' : 'Post';
+        return this.get('model.page') ? '页面' : '博文';
     }),
 
     // compares previousTagNames to tagNames
@@ -172,9 +172,8 @@ export default Mixin.create({
     // used on window.onbeforeunload
     unloadDirtyMessage() {
         return '==============================\n\n' +
-            'Hey there! It looks like you\'re in the middle of writing' +
-            ' something and you haven\'t saved all of your content.' +
-            '\n\nSave before you go!\n\n' +
+            '刚刚做的修改还没有保存，' +
+            '\n\n建议保存后离开!\n\n' +
             '==============================';
     },
 
@@ -184,12 +183,12 @@ export default Mixin.create({
         errors: {
             post: {
                 published: {
-                    published: 'Update failed.',
-                    draft: 'Saving failed.'
+                    published: '更新失败。',
+                    draft: '保存失败。'
                 },
                 draft: {
-                    published: 'Publish failed.',
-                    draft: 'Saving failed.'
+                    published: '发布失败。',
+                    draft: '保存失败。'
                 }
 
             }
@@ -198,12 +197,12 @@ export default Mixin.create({
         success: {
             post: {
                 published: {
-                    published: 'Updated.',
-                    draft: 'Saved.'
+                    published: '更新成功。',
+                    draft: '保存成功。'
                 },
                 draft: {
-                    published: 'Published!',
-                    draft: 'Saved.'
+                    published: '发布成功。',
+                    draft: '保存成功。'
                 }
             }
         }
@@ -217,7 +216,7 @@ export default Mixin.create({
         let notifications = this.get('notifications');
 
         if (status === 'published') {
-            message += `&nbsp;<a href="${path}">View ${type}</a>`;
+            message += `&nbsp;<a href="${path}">查看 ${type}</a>`;
         }
 
         notifications.showNotification(message.htmlSafe(), {delayed: delay});
@@ -294,7 +293,7 @@ export default Mixin.create({
 
             // Set a default title
             if (!this.get('model.titleScratch').trim()) {
-                this.set('model.titleScratch', '(Untitled)');
+                this.set('model.titleScratch', '(未命名)');
             }
 
             this.set('model.title', this.get('model.titleScratch'));

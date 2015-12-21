@@ -2,21 +2,21 @@
 <div id="entry-controls">
     <div class="{{if isViewingSubview 'settings-menu-pane-out-left' 'settings-menu-pane-in'}} settings-menu settings-menu-pane">
         <div class="settings-menu-header">
-            <h4>Post Settings</h4>
-            <button class="close icon-x settings-menu-header-action" {{action "closeMenus"}}><span class="hidden">Close</span></button>
+            <h4>博文选项</h4>
+            <button class="close icon-x settings-menu-header-action" {{action "closeMenus"}}><span class="hidden">关闭</span></button>
         </div>
         <div class="settings-menu-content">
-            {{gh-uploader uploaded="setCoverImage" canceled="clearCoverImage" description="Add post image" image=model.image uploaderReference=uploaderReference tagName="section"}}
+            {{gh-uploader uploaded="setCoverImage" canceled="clearCoverImage" description="添加图片" image=model.image uploaderReference=uploaderReference tagName="section"}}
             <form>
             <div class="form-group">
-                <label for="url">Post URL</label>
+                <label for="url">博文链接</label>
                 {{#if model.isPublished}}
                 <a class="post-view-link" target="_blank" href="{{model.absoluteUrl}}">
-                    View post <i class="icon-external"></i>
+                    查看博文 <i class="icon-external"></i>
                 </a>
                 {{else}}
                 <a class="post-view-link" target="_blank" href="{{model.previewUrl}}">
-                    Preview <i class="icon-external"></i>
+                    预览 <i class="icon-external"></i>
                 </a>
                 {{/if}}
 
@@ -27,7 +27,7 @@
             </div>
 
             {{#gh-form-group errors=model.errors property="post-setting-date"}}
-                <label for="post-setting-date">Publish Date</label>
+                <label for="post-setting-date">发布时间</label>
                 {{gh-datetime-input value=model.published_at
                                     update=(action "setPublishedAt")
                                     inputClass="post-setting-date"
@@ -37,7 +37,7 @@
             {{/gh-form-group}}
 
             <div class="form-group">
-                <label for="tag-input">Tags</label>
+                <label for="tag-input">标签</label>
                 {{gh-selectize
                     id="tag-input"
                     multiple=true
@@ -53,7 +53,7 @@
 
             {{#unless session.user.isAuthor}}
             <div class="form-group for-select">
-                <label for="author-list">Author</label>
+                <label for="author-list">作者</label>
                 <span class="input-icon icon-user">
                     <span class="gh-select" tabindex="0">
                     {{gh-select-native
@@ -73,8 +73,8 @@
             <ul class="nav-list nav-list-block">
                 {{#gh-tab tagName="li" classNames="nav-list-item"}}
                     <button type="button">
-                        <b>Meta Data</b>
-                        <span>Extra content for SEO and social media.</span>
+                        <b>Meta 标签</b>
+                        <span>优化在搜索引擎和社交媒体中的呈现效果。</span>
                     </button>
                     <i class="icon-arrow-right"></i>
                 {{/gh-tab}}
@@ -84,13 +84,13 @@
                 <label class="checkbox" for="static-page" {{action "togglePage" bubbles="false"}}>
                     {{input type="checkbox" name="static-page" id="static-page" class="gh-input post-setting-static-page" checked=model.page}}
                     <span class="input-toggle-component"></span>
-                    <p>Turn this post into a static page</p>
+                    <p>把该博文转化为静态页面</p>
                 </label>
 
                 <label class="checkbox" for="featured" {{action "toggleFeatured" bubbles="false"}}>
                     {{input type="checkbox" name="featured" id="featured" class="gh-input post-setting-featured" checked=model.featured}}
                     <span class="input-toggle-component"></span>
-                    <p>Feature this post</p>
+                    <p>使该博文成为专题</p>
                 </label>
             </div>
 
@@ -103,28 +103,28 @@
         {{#if isViewingSubview}}
         <div class="settings-menu-header subview">
             <button {{action "closeSubview"}} class="back icon-arrow-left settings-menu-header-action"><span class="hidden">Back</span></button>
-            <h4>Meta Data</h4>
+            <h4>Meta 标签</h4>
             <div style="width:23px;">{{!flexbox space-between}}</div>
         </div>
 
         <div class="settings-menu-content">
             <form {{action "discardEnter" on="submit"}}>
             {{#gh-form-group errors=model.errors property="meta_title"}}
-                <label for="meta-title">Meta Title</label>
+                <label for="meta-title">Meta 标题</label>
                 {{gh-input class="post-setting-meta-title" id="meta-title" value=metaTitleScratch name="post-setting-meta-title" focus-out="setMetaTitle" stopEnterKeyDownPropagation="true"}}
-                <p>Recommended: <b>70</b> characters. You’ve used {{gh-count-down-characters metaTitleScratch 70}}</p>
+                <p><b>70</b> 字以内效果最佳。{{gh-count-down-characters metaTitleScratch 70}}</p>
                 {{gh-error-message errors=model.errors property="meta_title"}}
             {{/gh-form-group}}
 
             {{#gh-form-group errors=model.errors property="meta_description"}}
-                <label for="meta-description">Meta Description</label>
+                <label for="meta-description">Meta 摘要</label>
                 {{gh-textarea class="gh-input post-setting-meta-description" id="meta-description" value=metaDescriptionScratch name="post-setting-meta-description" focus-out="setMetaDescription" stopEnterKeyDownPropagation="true"}}
-                <p>Recommended: <b>156</b> characters. You’ve used {{gh-count-down-characters metaDescriptionScratch 156}}</p>
+                <p><b>156</b> 字以内效果最佳。{{gh-count-down-characters metaDescriptionScratch 156}}</p>
                 {{gh-error-message errors=model.errors property="meta_description"}}
             {{/gh-form-group}}
 
             <div class="form-group">
-                <label>Search Engine Result Preview</label>
+                <label>搜索引擎效果预览</label>
                 <div class="seo-preview">
                     <div class="seo-preview-title">{{seoTitle}}</div>
                     <div class="seo-preview-link">{{seoURL}}</div>

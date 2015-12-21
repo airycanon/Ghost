@@ -7,7 +7,7 @@ export default BaseValidator.extend({
         let name = model.get('name');
 
         if (!validator.isLength(name, 1)) {
-            model.get('errors').add('name', 'Please enter a name.');
+            model.get('errors').add('name', '请填写用户名。');
             this.invalidate();
         }
     },

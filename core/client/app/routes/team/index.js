@@ -4,7 +4,7 @@ import PaginationRouteMixin from 'ghost/mixins/pagination-route';
 import styleBody from 'ghost/mixins/style-body';
 
 export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, PaginationRouteMixin, {
-    titleToken: 'Team',
+    titleToken: '团队',
 
     classNames: ['view-team'],
 

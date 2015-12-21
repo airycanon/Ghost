@@ -3,7 +3,7 @@
     <div class="gh-flow-content-wrap">
         <section class="gh-flow-content">
             <header>
-                <h1>Create your account</h1>
+                <h1>创建账户</h1>
             </header>
 
             <form id="signup" class="gh-flow-create" method="post" novalidate="novalidate">
@@ -13,21 +13,21 @@
 
                 {{gh-profile-image fileStorage=config.fileStorage email=model.email setImage="setImage"}}
                 {{#gh-form-group errors=model.errors hasValidated=hasValidated property="email"}}
-                    <label for="email-address">Email address</label>
+                    <label for="email-address">邮箱</label>
                     <span class="input-icon icon-mail">
                         {{gh-input type="email" name="email" placeholder="Eg. john@example.com" enter=(action "signup") disabled="disabled" autocorrect="off" value=model.email focusOut=(action "validate" "email")}}
                     </span>
                     {{gh-error-message errors=model.errors property="email"}}
                 {{/gh-form-group}}
                 {{#gh-form-group errors=model.errors hasValidated=hasValidated property="name"}}
-                    <label for="full-name">Full name</label>
+                    <label for="full-name">用户名</label>
                     <span class="input-icon icon-user">
                         {{gh-trim-focus-input tabindex="1" type="text" name="name" placeholder="Eg. John H. Watson" enter=(action "signup") autocorrect="off" value=model.name focusOut=(action "validate" "name")}}
                     </span>
                     {{gh-error-message errors=model.errors property="name"}}
                 {{/gh-form-group}}
                 {{#gh-form-group errors=model.errors hasValidated=hasValidated property="password"}}
-                    <label for="password">Password</label>
+                    <label for="password">密码</label>
                     <span class="input-icon icon-lock">
                         {{gh-input tabindex="2" type="password" name="password" enter=(action "signup") autocorrect="off" value=model.password focusOut=(action "validate" "password")}}
                     </span>

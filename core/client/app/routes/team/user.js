@@ -5,7 +5,7 @@ import styleBody from 'ghost/mixins/style-body';
 import NotFoundHandler from 'ghost/mixins/404-handler';
 
 export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, NotFoundHandler, {
-    titleToken: 'Team - User',
+    titleToken: '团队 - 用户',
 
     classNames: ['team-view-user'],
 

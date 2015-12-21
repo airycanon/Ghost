@@ -13,7 +13,7 @@ export default Route.extend(styleBody, {
     beforeModel() {
         this._super(...arguments);
         if (this.get('session.isAuthenticated')) {
-            this.get('notifications').showAlert('You can\'t reset your password while you\'re signed in.', {type: 'warn', delayed: true, key: 'password.reset.signed-in'});
+            this.get('notifications').showAlert('您还未登录，无法重置密码。', {type: 'warn', delayed: true, key: 'password.reset.signed-in'});
             this.transitionTo(Configuration.routeAfterAuthentication);
         }
     },

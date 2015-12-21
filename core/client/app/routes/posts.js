@@ -4,7 +4,7 @@ import ShortcutsRoute from 'ghost/mixins/shortcuts-route';
 import PaginationRouteMixin from 'ghost/mixins/pagination-route';
 
 export default AuthenticatedRoute.extend(ShortcutsRoute, PaginationRouteMixin, {
-    titleToken: 'Content',
+    titleToken: '内容',
 
     paginationModel: 'post',
     paginationSettings: {

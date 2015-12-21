@@ -1,9 +1,9 @@
 {{#gh-modal-dialog action="closeModal" showClose=true type="action" style="wide"
-    title="Are you sure you want to delete this tag?" confirm=confirm}}
+    title="确认要删除该标签吗?" confirm=confirm}}
 
     {{#if model.count.posts}}
-        <strong>WARNING:</strong> <span class="red">This tag is attached to {{model.count.posts}} {{postInflection}}.</span> You're about to delete "<strong>{{model.name}}</strong>". This is permanent! No backups, no restores, no magic undo button. We warned you, ok?
+        <span class="red">该标签已被 {{model.count.posts}} {{postInflection}}使用。</span> 将要删除标签 "<strong>{{model.name}}</strong>"，删除后无法恢复，是否确认删除？
     {{else}}
-        <strong>WARNING:</strong> You're about to delete "<strong>{{model.name}}</strong>". This is permanent! No backups, no restores, no magic undo button. We warned you, ok?
+        标签 "<strong>{{model.name}}，</strong>"删除后将无法恢复，是否确认删除？
     {{/if}}
 {{/gh-modal-dialog}}

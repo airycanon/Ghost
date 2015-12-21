@@ -12,10 +12,10 @@ export default BaseValidator.create({
 
         if (this.isActive(model)) {
             if (validator.empty(name)) {
-                model.get('errors').add('name', 'Please enter a name.');
+                model.get('errors').add('name', '请输入用户名');
                 this.invalidate();
             } else if (!validator.isLength(name, 0, 150)) {
-                model.get('errors').add('name', 'Name is too long');
+                model.get('errors').add('name', '用户名过长');
                 this.invalidate();
             }
         }
@@ -26,7 +26,7 @@ export default BaseValidator.create({
 
         if (this.isActive(model)) {
             if (!validator.isLength(bio, 0, 200)) {
-                model.get('errors').add('bio', 'Bio is too long');
+                model.get('errors').add('bio', '个人简介过长');
                 this.invalidate();
             }
         }
@@ -36,7 +36,7 @@ export default BaseValidator.create({
         let email = model.get('email');
 
         if (!validator.isEmail(email)) {
-            model.get('errors').add('email', 'Please supply a valid email address');
+            model.get('errors').add('email', '请填写邮箱。');
             this.invalidate();
         }
     },
@@ -46,7 +46,7 @@ export default BaseValidator.create({
 
         if (this.isActive(model)) {
             if (!validator.isLength(location, 0, 150)) {
-                model.get('errors').add('location', 'Location is too long');
+                model.get('errors').add('location', '位置信息过长。');
                 this.invalidate();
             }
         }
@@ -61,7 +61,7 @@ export default BaseValidator.create({
                 (!validator.isURL(website, {require_protocol: false}) ||
                 !validator.isLength(website, 0, 2000))) {
 
-                model.get('errors').add('website', 'Website is not a valid url');
+                model.get('errors').add('website', '网站链接格式不正确。');
                 this.invalidate();
             }
         }
@@ -73,7 +73,7 @@ export default BaseValidator.create({
             let roles = model.get('roles');
 
             if (roles.length < 1) {
-                model.get('errors').add('role', 'Please select a role');
+                model.get('errors').add('role', '请选择角色。');
                 this.invalidate();
             }
         }

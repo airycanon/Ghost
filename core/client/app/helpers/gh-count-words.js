@@ -11,10 +11,10 @@ export default Helper.helper(function (params) {
     let markdown = params[0] || '';
 
     if (/^\s*$/.test(markdown)) {
-        return '0 words';
+        return '0 个字';
     }
 
     let count = counter(markdown);
 
-    return count + (count === 1 ? ' word' : ' words');
+    return count + (count === 1 ? ' 个字' : ' 个字');
 });

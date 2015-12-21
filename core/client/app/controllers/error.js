@@ -15,6 +15,6 @@ export default Controller.extend({
             return 'Page not found';
         }
 
-        return this.get('content.statusText') !== 'error' ? this.get('content.statusText') : 'Internal Server Error';
+        return this.get('content.statusText') !== 'error' ? this.get('content.statusText') : '内部服务器错误';
     })
 });

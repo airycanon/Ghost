@@ -417,9 +417,9 @@ ConfigManager.prototype.displayDeprecated = function (item, properties, address)
         if (properties.length) {
             return self.displayDeprecated(item[property], properties, address);
         }
-        errorText = 'The configuration property [' + chalk.bold(address.join('.')) + '] has been deprecated.';
-        explanationText =  'This will be removed in a future version, please update your config.js file.';
-        helpText = 'Please check http://support.ghost.org/config for the most up-to-date example.';
+        errorText = '配置项 [' + chalk.bold(address.join('.')) + '] 已弃用。';
+        explanationText =  '该配置项在后续版本中将被移除，请更新您的 congfig.js 文件。';
+        helpText = '请访问 http://support.ghost.org/config 查看最新示例。';
         errors.logWarn(errorText, explanationText, helpText);
     }
 };

@@ -3,7 +3,7 @@ import CurrentUserSettings from 'ghost/mixins/current-user-settings';
 import styleBody from 'ghost/mixins/style-body';
 
 export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, {
-    titleToken: 'Settings - General',
+    titleToken: '设置 - 常规',
 
     classNames: ['settings-view-general'],
 

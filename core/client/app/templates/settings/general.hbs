@@ -1,8 +1,8 @@
 <section class="gh-view">
     <header class="view-header">
-        {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>General</span>{{/gh-view-title}}
+        {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>常规</span>{{/gh-view-title}}
         <section class="view-actions">
-            {{#gh-spin-button class="btn btn-blue" action="save" submitting=submitting}}Save{{/gh-spin-button}}
+            {{#gh-spin-button class="btn btn-blue" action="save" submitting=submitting}}保存{{/gh-spin-button}}
         </section>
     </header>
 
@@ -11,63 +11,62 @@
             <fieldset>
 
                 {{#gh-form-group errors=model.errors hasValidated=model.hasValidated property="title"}}
-                    <label for="blog-title">Blog Title</label>
+                    <label for="blog-title">博客标题</label>
                     {{gh-input id="blog-title" class="gh-input" name="general[title]" type="text" value=model.title focusOut=(action "validate" "title")}}
                     {{gh-error-message errors=model.errors property="title"}}
-                    <p>The name of your blog</p>
+                    <p>博客的名称</p>
                 {{/gh-form-group}}
 
                 {{#gh-form-group errors=model.errors hasValidated=model.hasValidated property="description" class="description-container"}}
-                    <label for="blog-description">Blog Description</label>
+                    <label for="blog-description">博客简介</label>
                     {{gh-textarea id="blog-description" class="gh-input" name="general[description]" value=model.description focusOut=(action "validate" "description")}}
                     {{gh-error-message errors=model.errors property="description"}}
                     <p>
-                        Describe what your blog is about
-                        {{gh-count-characters model.description}}
+                        简单描述一下您的博客，不超过 <b>200</b> 字。{{gh-count-down-characters  model.description 200}}
                     </p>
                 {{/gh-form-group}}
             </fieldset>
 
             <div class="form-group">
-                <label>Blog Logo</label>
+                <label>博客 Logo</label>
                 {{#if model.logo}}
                     <img class="blog-logo" src="{{model.logo}}" alt="logo" role="button" {{action "openModal" "upload" this "logo"}}>
                 {{else}}
-                    <button type="button" class="btn btn-green js-modal-logo" {{action "openModal" "upload" this "logo"}}>Upload Image</button>
+                    <button type="button" class="btn btn-green js-modal-logo" {{action "openModal" "upload" this "logo"}}>上传图片</button>
                 {{/if}}
-                <p>Display a sexy logo for your publication</p>
+                <p>上传一个漂亮的 LOGO</p>
             </div>
 
             <div class="form-group">
-                <label>Blog Cover</label>
+                <label>博客封面</label>
                 {{#if model.cover}}
                     <img class="blog-cover" src="{{model.cover}}" alt="cover photo" role="button" {{action "openModal" "upload" this "cover"}}>
                 {{else}}
-                    <button type="button" class="btn btn-green js-modal-cover" {{action "openModal" "upload" this "cover"}}>Upload Image</button>
+                    <button type="button" class="btn btn-green js-modal-cover" {{action "openModal" "upload" this "cover"}}>上传图片</button>
                 {{/if}}
-                <p>Display a cover image on your site</p>
+                <p>上传一个漂亮的封面</p>
             </div>
 
             <fieldset>
 
                 <div class="form-group">
-                    <label for="postsPerPage">Posts per page</label>
+                    <label for="postsPerPage">每页的博文数量</label>
                     {{! `pattern` brings up numeric keypad allowing any number of digits}}
                     {{gh-input id="postsPerPage" class="gh-input" name="general[postsPerPage]" focus-out="checkPostsPerPage" value=model.postsPerPage min="1" max="1000" type="number" pattern="[0-9]*"}}
-                    <p>How many posts should be displayed on each page</p>
+                    <p>每个页面最多展示的博文数量</p>
                 </div>
 
                 <div class="form-group for-checkbox">
-                    <label for="permalinks">Dated Permalinks</label>
+                    <label for="permalinks">博文链接</label>
                     <label class="checkbox" for="permalinks">
                         {{input id="permalinks" class="gh-input" name="general[permalinks]" type="checkbox" checked=isDatedPermalinks}}
                         <span class="input-toggle-component"></span>
-                        <p>Include the date in your post URLs</p>
+                        <p>在博文链接中显示日期</p>
                     </label>
                 </div>
 
                 <div class="form-group for-select">
-                    <label for="activeTheme">Theme</label>
+                    <label for="activeTheme">主题</label>
                     <span class="gh-select" data-select-text="{{selectedTheme.label}}" tabindex="0">
                         {{gh-select-native
                             id="activeTheme"
@@ -79,16 +78,16 @@
                             action="setTheme"
                         }}
                    </span>
-                    <p>Select a theme for your blog</p>
+                    <p>选择一个漂亮的主题</p>
                 </div>
 
                 <div class="form-group for-checkbox">
-                    <label for="isPrivate">Make this blog private</label>
+                    <label for="isPrivate">隐私设置</label>
                     <label class="checkbox" for="isPrivate">
                         {{input id="isPrivate" name="general[isPrivate]" type="checkbox"
                         checked=model.isPrivate}}
                         <span class="input-toggle-component"></span>
-                        <p>Enable password protection</p>
+                        <p>启用访问密码</p>
                     </label>
                 </div>
 
@@ -96,7 +95,7 @@
                 {{#gh-form-group errors=model.errors hasValidated=model.hasValidated property="password"}}
                     {{gh-input name="general[password]" type="text" value=model.password focusOut=(action "validate" "password")}}
                     {{gh-error-message errors=model.errors property="password"}}
-                    <p>This password will be needed to access your blog. All search engine optimization and social features are now disabled. This password is stored in plaintext.</p>
+                    <p>访问者需要输入密码才能访问您的博客，开启后您的博客将无法被搜索引擎收录。请注意，该密码以明文存储。</p>
                 {{/gh-form-group}}
                 {{/if}}
             </fieldset>

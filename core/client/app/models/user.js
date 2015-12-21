@@ -61,11 +61,11 @@ export default Model.extend(ValidationEngine, {
         let validationErrors = [];
 
         if (!validator.equals(this.get('newPassword'), this.get('ne2Password'))) {
-            validationErrors.push({message: 'Your new passwords do not match'});
+            validationErrors.push({message: '两次输入的密码不一致。'});
         }
 
         if (!validator.isLength(this.get('newPassword'), 8)) {
-            validationErrors.push({message: 'Your password is not long enough. It must be at least 8 characters long.'});
+            validationErrors.push({message: '密码长度至少为8位。'});
         }
 
         return validationErrors;

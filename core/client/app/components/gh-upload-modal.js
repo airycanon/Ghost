@@ -30,7 +30,7 @@ export default ModalDialog.extend({
     confirm: {
         reject: {
             buttonClass: 'btn btn-default',
-            text: 'Cancel', // The reject button text
+            text: '取消', // The reject button text
             func() { // The function called on rejection
                 return true;
             }
@@ -38,7 +38,7 @@ export default ModalDialog.extend({
 
         accept: {
             buttonClass: 'btn btn-blue right',
-            text: 'Save', // The accept button text: 'Save'
+            text: '保存', // The accept button text: 'Save'
             func() {
                 let imageType = `model.${this.get('imageType')}`;
                 let value;

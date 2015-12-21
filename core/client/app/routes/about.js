@@ -6,7 +6,7 @@ import styleBody from 'ghost/mixins/style-body';
 const {inject} = Ember;
 
 export default AuthenticatedRoute.extend(styleBody, {
-    titleToken: 'About',
+    titleToken: '关于',
 
     classNames: ['view-about'],
 

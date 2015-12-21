@@ -1,8 +1,8 @@
 <section class="gh-view">
     <header class="view-header">
-        {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>Code Injection</span>{{/gh-view-title}}
+        {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>代码</span>{{/gh-view-title}}
         <section class="view-actions">
-            {{#gh-spin-button class="btn btn-blue" action="save" submitting=submitting}}Save{{/gh-spin-button}}
+            {{#gh-spin-button class="btn btn-blue" action="save" submitting=submitting}}保存{{/gh-spin-button}}
         </section>
     </header>
 
@@ -10,18 +10,18 @@
         <form id="settings-code" novalidate="novalidate">
             <fieldset>
                 <p>
-                    Ghost allows you to inject code into the top and bottom of your theme files without editing them. This allows for quick modifications to insert useful things like tracking codes and meta tags.
+                    这里可以插入HTML代码到网页的头部或尾部。比如你可以插入搜索引擎优化代码、第三方统计代码等等。
                 </p>
 
                 <div class="form-group settings-code">
-                    <label for="ghost-head">Blog Header</label>
-                    <p>Code here will be injected into the <code>\{{ghost_head}}</code> tag on every page of your blog</p>
+                    <label for="ghost-head">博客头部</label>
+                    <p>下面的代码将被插入每个页面的 <code>\{{ghost_head}}</code> 标签中。</p>
                     {{gh-cm-editor id="ghost-head" class="gh-input settings-code-editor" name="codeInjection[ghost_head]" type="text" value=model.ghost_head}}
                 </div>
 
                 <div class="form-group settings-code">
-                    <label for="ghost-foot">Blog Footer</label>
-                    <p>Code here will be injected into the <code>\{{ghost_foot}}</code> tag on every page of your blog</p>
+                    <label for="ghost-foot">博客尾部</label>
+                    <p>下面的代码将被插入每个页面的 <code>\{{ghost_foot}}</code> 标签中。</p>
                     {{gh-cm-editor id="ghost-foot" class="gh-input settings-code-editor" name="codeInjection[ghost_foot]" type="text" value=model.ghost_foot}}
                 </div>
             </fieldset>

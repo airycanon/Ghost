@@ -19,15 +19,15 @@ export default Component.extend({
     }),
 
     publishText: computed('isPublished', 'postOrPage', function () {
-        return this.get('isPublished') ? `Update ${this.get('postOrPage')}` : 'Publish Now';
+        return this.get('isPublished') ? `更新${this.get('postOrPage')}` : '立即发布';
     }),
 
     draftText: computed('isPublished', function () {
-        return this.get('isPublished') ? 'Unpublish' : 'Save Draft';
+        return this.get('isPublished') ? '取消发布' : '保存草稿';
     }),
 
     deleteText: computed('postOrPage', function () {
-        return `Delete ${this.get('postOrPage')}`;
+        return `删除${this.get('postOrPage')}`;
     }),
 
     saveText: computed('willPublish', 'publishText', 'draftText', function () {

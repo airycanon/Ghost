@@ -297,11 +297,11 @@ export default Controller.extend(SettingsMenuMixin, {
 
             // Validate new Published date
             if (!newPublishedAt.isValid()) {
-                errMessage = 'Published Date must be a valid date with format: ' +
-                    'DD MMM YY @ HH:mm (e.g. 6 Dec 14 @ 15:00)';
+                errMessage = '发布时间必须使用如下格式：' +
+                    'YYYY年MM月DD日 @ HH:mm (例如：2014年10月8日 @ 20:00 )。';
             }
             if (newPublishedAt.diff(new Date(), 'h') > 0) {
-                errMessage = 'Published Date cannot currently be in the future.';
+                errMessage = '发布时间不能超过当前时间。';
             }
 
             // If errors, notify and exit.

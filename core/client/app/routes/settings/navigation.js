@@ -6,7 +6,7 @@ import styleBody from 'ghost/mixins/style-body';
 const {$} = Ember;
 
 export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, {
-    titleToken: 'Settings - Navigation',
+    titleToken: '设置 - 导航',
 
     classNames: ['settings-view-navigation'],
 

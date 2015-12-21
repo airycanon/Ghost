@@ -6,7 +6,7 @@ import styleBody from 'ghost/mixins/style-body';
 const {Route, inject} = Ember;
 
 export default Route.extend(styleBody, {
-    titleToken: 'Setup',
+    titleToken: '设置',
 
     classNames: ['ghost-setup'],
 

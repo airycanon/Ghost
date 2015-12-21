@@ -12,7 +12,7 @@ export default BaseValidator.create({
         }
 
         if (validator.empty(label)) {
-            model.get('errors').add('label', 'You must specify a label');
+            model.get('errors').add('label', '请选定一个标签。');
             this.invalidate();
         }
 
@@ -32,10 +32,10 @@ export default BaseValidator.create({
         }
 
         if (validator.empty(url)) {
-            model.get('errors').add('url', 'You must specify a URL or relative path');
+            model.get('errors').add('url', '请选定一个链接或相对路径。');
             this.invalidate();
         } else if (url.match(/\s/) || (!validator.isURL(url, validatorOptions) && !url.match(urlRegex))) {
-            model.get('errors').add('url', 'You must specify a valid URL or relative path');
+            model.get('errors').add('url', '链接或相对路径格式不正确。');
             this.invalidate();
         }
 

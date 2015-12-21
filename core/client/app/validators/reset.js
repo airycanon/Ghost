@@ -8,13 +8,13 @@ export default BaseValidator.create({
         let p2 = model.get('ne2Password');
 
         if (validator.empty(p1)) {
-            model.get('errors').add('newPassword', 'Please enter a password.');
+            model.get('errors').add('newPassword', '请输入密码。');
             this.invalidate();
         } else if (!validator.isLength(p1, 8)) {
-            model.get('errors').add('newPassword', 'The password is not long enough.');
+            model.get('errors').add('newPassword', '密码长度至少为8个字符。');
             this.invalidate();
         } else if (!validator.equals(p1, p2)) {
-            model.get('errors').add('ne2Password', 'The two new passwords don\'t match.');
+            model.get('errors').add('ne2Password', '两次输入的密码不一致。');
             this.invalidate();
         }
     }

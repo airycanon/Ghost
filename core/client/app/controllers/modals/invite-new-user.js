@@ -30,7 +30,7 @@ export default Controller.extend(ValidationEngine, {
 
     confirm: {
         accept: {
-            text: 'send invitation now'
+            text: '立即发送邀请'
         },
         reject: {
             buttonClass: 'hidden'
@@ -61,9 +61,9 @@ export default Controller.extend(ValidationEngine, {
 
                 if (invitedUser) {
                     if (invitedUser.get('status') === 'invited' || invitedUser.get('status') === 'invited-pending') {
-                        this.get('notifications').showAlert('A user with that email address was already invited.', {type: 'warn', key: 'invite.send.already-invited'});
+                        this.get('notifications').showAlert('已邀请过该用户。', {type: 'warn', key: 'invite.send.already-invited'});
                     } else {
-                        this.get('notifications').showAlert('A user with that email address already exists.', {type: 'warn', key: 'invite.send.user-exists'});
+                        this.get('notifications').showAlert('邮箱地址已存在。', {type: 'warn', key: 'invite.send.user-exists'});
                     }
                 } else {
                     newUser = this.store.createRecord('user', {
@@ -78,7 +78,7 @@ export default Controller.extend(ValidationEngine, {
                         // If sending the invitation email fails, the API will still return a status of 201
                         // but the user's status in the response object will be 'invited-pending'.
                         if (newUser.get('status') === 'invited-pending') {
-                            this.get('notifications').showAlert('Invitation email was not sent.  Please try resending.', {type: 'error', key: 'invite.send.failed'});
+                            this.get('notifications').showAlert('邀请邮件发送失败，请重试。', {type: 'error', key: 'invite.send.failed'});
                         } else {
                             this.get('notifications').closeAlerts('invite.send');
                             this.get('notifications').showNotification(notificationText);

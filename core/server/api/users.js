@@ -49,7 +49,7 @@ sendInviteEmail = function sendInviteEmail(user) {
             mail: [{
                 message: {
                     to: user.email,
-                    subject: emailData.invitedByName + ' has invited you to join ' + emailData.blogName,
+                    subject: emailData.invitedByName + ' 邀请您加入 ' + emailData.blogName,
                     html: emailContent.html,
                     text: emailContent.text
                 },
@@ -137,7 +137,7 @@ users = {
                 return {users: [result.toJSON(options)]};
             }
 
-            return Promise.reject(new errors.NotFoundError('User not found.'));
+            return Promise.reject(new errors.NotFoundError('用户不存在。'));
         });
     },
 
@@ -192,14 +192,14 @@ users = {
                     var contextRoleId = contextUser.related('roles').toJSON(options)[0].id;
 
                     if (roleId !== contextRoleId && editedUserId === contextUser.id) {
-                        return Promise.reject(new errors.NoPermissionError('You cannot change your own role.'));
+                        return Promise.reject(new errors.NoPermissionError('无法修改自己的角色'));
                     }
 
                     return dataProvider.User.findOne({role: 'Owner'}).then(function (owner) {
                         if (contextUser.id !== owner.id) {
                             if (editedUserId === owner.id) {
                                 if (owner.related('roles').at(0).id !== roleId) {
-                                    return Promise.reject(new errors.NoPermissionError('Cannot change Owner\'s role.'));
+                                    return Promise.reject(new errors.NoPermissionError('无法修改所有者角色。'));
                                 }
                             } else if (roleId !== contextRoleId) {
                                 return canThis(options.context).assign.role(role).then(function () {
@@ -212,7 +212,7 @@ users = {
                     });
                 });
             }).catch(function handleError(error) {
-                return errors.formatAndRejectAPIError(error, 'You do not have permission to edit this user');
+                return errors.formatAndRejectAPIError(error, '您没有权限修改该用户。');
             });
         }
 
@@ -239,7 +239,7 @@ users = {
                 return {users: [result.toJSON(options)]};
             }
 
-            return Promise.reject(new errors.NotFoundError('User not found.'));
+            return Promise.reject(new errors.NotFoundError('用户不存在。'));
         });
     },
 
@@ -269,7 +269,7 @@ users = {
                     // Make sure user is allowed to add a user with this role
                     return dataProvider.Role.findOne({id: roleId}).then(function (role) {
                         if (role.get('name') === 'Owner') {
-                            return Promise.reject(new errors.NoPermissionError('Not allowed to create an owner user.'));
+                            return Promise.reject(new errors.NoPermissionError('您没有权限添加用户。'));
                         }
 
                         return canThis(options.context).assign.role(role);
@@ -280,7 +280,7 @@ users = {
 
                 return options;
             }).catch(function handleError(error) {
-                return errors.formatAndRejectAPIError(error, 'You do not have permission to add this user');
+                return errors.formatAndRejectAPIError(error, '您没有权限添加用户。');
             });
         }
 
@@ -299,7 +299,7 @@ users = {
                 newUser.password = globalUtils.uid(50);
                 newUser.status = 'invited';
             } else {
-                return Promise.reject(new errors.BadRequestError('No email provided.'));
+                return Promise.reject(new errors.BadRequestError('请提供邮箱。'));
             }
 
             return dataProvider.User.getByEmail(
@@ -312,7 +312,7 @@ users = {
                     if (foundUser.get('status') === 'invited' || foundUser.get('status') === 'invited-pending') {
                         return foundUser;
                     } else {
-                        return Promise.reject(new errors.BadRequestError('User is already registered.'));
+                        return Promise.reject(new errors.BadRequestError('用户已注册。'));
                     }
                 }
             }).then(function (invitedUser) {
@@ -331,7 +331,7 @@ users = {
                 return Promise.resolve({users: [user]});
             }).catch(function (error) {
                 if (error && error.errorType === 'EmailError') {
-                    error.message = 'Error sending email: ' + error.message + ' Please check your email settings and resend the invitation.';
+                    error.message = '邮件发送失败: ' + error.message + ' 请检查邮箱配置后重新发送邀请函。';
                     errors.logWarn(error.message);
 
                     // If sending the invitation failed, set status to invited-pending
@@ -375,7 +375,7 @@ users = {
                 options.status = 'all';
                 return options;
             }).catch(function handleError(error) {
-                return errors.formatAndRejectAPIError(error, 'You do not have permission to destroy this user.');
+                return errors.formatAndRejectAPIError(error, '您没有权限销毁用户。');
             });
         }
 
@@ -442,7 +442,7 @@ users = {
             return canThis(options.context).edit.user(options.data.password[0].user_id).then(function permissionGranted() {
                 return options;
             }).catch(function (error) {
-                return errors.formatAndRejectAPIError(error, 'You do not have permission to change the password for this user');
+                return errors.formatAndRejectAPIError(error, '您没有权限修改该用户的密码。');
             });
         }
 
@@ -469,7 +469,7 @@ users = {
 
         // Pipeline calls each task passing the result of one to be the arguments for the next
         return pipeline(tasks, object, options).then(function formatResponse() {
-            return Promise.resolve({password: [{message: 'Password changed successfully.'}]});
+            return Promise.resolve({password: [{message: '密码修改成功。'}]});
         });
     },
 

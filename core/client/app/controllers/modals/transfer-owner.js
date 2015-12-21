@@ -10,11 +10,11 @@ export default Controller.extend({
 
     confirm: {
         accept: {
-            text: 'Yep - I\'m sure',
+            text: '确认转让',
             buttonClass: 'btn btn-red'
         },
         reject: {
-            text: 'Cancel',
+            text: '取消操作',
             buttonClass: 'btn btn-default btn-minor'
         }
     },

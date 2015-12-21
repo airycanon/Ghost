@@ -4,7 +4,7 @@ import {request as ajax} from 'ic-ajax';
 const {$, Controller, computed, inject} = Ember;
 
 export default Controller.extend({
-    uploadButtonText: 'Import',
+    uploadButtonText: '导入',
     importErrors: '',
     submitting: false,
 
@@ -47,7 +47,7 @@ export default Controller.extend({
             let notifications = this.get('notifications');
             let currentUserId = this.get('session.user.id');
 
-            this.set('uploadButtonText', 'Importing');
+            this.set('uploadButtonText', '正在导入');
             this.set('importErrors', '');
 
             formData.append('importfile', file);
@@ -65,16 +65,16 @@ export default Controller.extend({
                 // Reload currentUser and set session
                 this.set('session.user', this.store.findRecord('user', currentUserId));
                 // TODO: keep as notification, add link to view content
-                notifications.showNotification('Import successful.');
+                notifications.showNotification('导入成功。');
                 notifications.closeAlerts('import.upload');
             }).catch((response) => {
                 if (response && response.jqXHR && response.jqXHR.responseJSON && response.jqXHR.responseJSON.errors) {
                     this.set('importErrors', response.jqXHR.responseJSON.errors);
                 }
 
-                notifications.showAlert('Import Failed', {type: 'error', key: 'import.upload.failed'});
+                notifications.showAlert('导入失败', {type: 'error', key: 'import.upload.failed'});
             }).finally(() => {
-                this.set('uploadButtonText', 'Import');
+                this.set('uploadButtonText', '导入');
             });
         },
 
@@ -99,7 +99,7 @@ export default Controller.extend({
             ajax(this.get('ghostPaths.url').api('mail', 'test'), {
                 type: 'POST'
             }).then(() => {
-                notifications.showAlert('Check your email for the test message.', {type: 'info', key: 'test-email.send.success'});
+                notifications.showAlert('发送测试邮件', {type: 'info', key: 'test-email.send.success'});
                 this.toggleProperty('submitting');
             }).catch((error) => {
                 if (typeof error.jqXHR !== 'undefined') {

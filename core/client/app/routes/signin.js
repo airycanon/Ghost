@@ -7,7 +7,7 @@ const {Route, inject} = Ember;
 const {Errors} = DS;
 
 export default Route.extend(styleBody, {
-    titleToken: 'Sign In',
+    titleToken: '登录',
 
     classNames: ['ghost-login'],
 

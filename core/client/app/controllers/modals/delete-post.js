@@ -8,11 +8,11 @@ export default Controller.extend({
 
     confirm: {
         accept: {
-            text: 'Delete',
+            text: '删除',
             buttonClass: 'btn btn-red'
         },
         reject: {
-            text: 'Cancel',
+            text: '取消',
             buttonClass: 'btn btn-default btn-minor'
         }
     },
@@ -29,7 +29,7 @@ export default Controller.extend({
                 this.get('notifications').closeAlerts('post.delete');
                 this.transitionToRoute('posts.index');
             }, () => {
-                this.get('notifications').showAlert('Your post could not be deleted. Please try again.', {type: 'error', key: 'post.delete.failed'});
+                this.get('notifications').showAlert('删除失败,请重试。', {type: 'error', key: 'post.delete.failed'});
             });
         },
 

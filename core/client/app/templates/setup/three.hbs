@@ -1,13 +1,13 @@
 <header>
-    <h1>Invite your team</h1>
-    <p>Ghost works best when shared with others. Collaborate, get feedback on your posts &amp; work together on ideas.</p>
+    <h1>邀请您的团队成员</h1>
+    <p>和其他成员共同思考、合作、反馈可以让 Ghost 做得更好。 </p>
 </header>
 
 <img class="gh-flow-faces" src="{{gh-path 'admin' 'img/users.png'}}" alt="" />
 
 <form class="gh-flow-invite">
     {{#gh-form-group errors=errors hasValidated=hasValidated property="users"}}
-        <label for="users">Enter one email address per line, we’ll handle the rest! <i class="icon-mail"></i></label>
+        <label for="users">每行输入一个邮箱地址，剩下的交给我们<i class="icon-mail"></i></label>
         {{gh-textarea name="users" value=users required="required" focusOut=(action "validate")}}
     {{/gh-form-group}}
 
@@ -15,5 +15,5 @@
 </form>
 
 <button class="gh-flow-skip" {{action "skipInvite"}}>
-    I'll do this later, take me to my blog!
+    跳过此步骤
 </button>

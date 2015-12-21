@@ -102,9 +102,9 @@ function initNotifications() {
         api.notifications.add({notifications: [{
             type: 'info',
             message: [
-                'Ghost is attempting to use a direct method to send email.',
-                'It is recommended that you explicitly configure an email service.',
-                'See <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a> for instructions'
+                'Ghost 正在尝试使用默认配置发送邮件',
+                '建议您手动配置邮件服务器。',
+                '更多说明请访问 <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a>。'
             ].join(' ')
         }]}, {context: {internal: true}});
     }
@@ -112,8 +112,8 @@ function initNotifications() {
         api.notifications.add({notifications: [{
             type: 'warn',
             message: [
-                'Ghost is currently unable to send email.',
-                'See <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a> for instructions'
+                'Ghost 目前无法发送邮件',
+                '更多说明请访问 <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a>。'
             ].join(' ')
         }]}, {context: {internal: true}});
     }

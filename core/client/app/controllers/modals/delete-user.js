@@ -45,7 +45,7 @@ export default Controller.extend({
                 this.store.unloadAll('post');
                 this.transitionToRoute('team');
             }, () => {
-                this.get('notifications').showAlert('The user could not be deleted. Please try again.', {type: 'error', key: 'user.delete.failed'});
+                this.get('notifications').showAlert('删除用户失败，请重试。', {type: 'error', key: 'user.delete.failed'});
             });
         },
 

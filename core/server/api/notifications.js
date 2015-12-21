@@ -30,7 +30,7 @@ notifications = {
         return canThis(options.context).browse.notification().then(function () {
             return {notifications: notificationsStore};
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to browse notifications.'));
+            return Promise.reject(new errors.NoPermissionError('您没有权限查看该通知。'));
         });
     },
 
@@ -65,7 +65,7 @@ notifications = {
             return canThis(options.context).add.notification().then(function () {
                 return options;
             }, function () {
-                return Promise.reject(new errors.NoPermissionError('You do not have permission to add notifications.'));
+                return Promise.reject(new errors.NoPermissionError('您没有权限添加通知。'));
             });
         }
 
@@ -129,7 +129,7 @@ notifications = {
             return canThis(options.context).destroy.notification().then(function () {
                 return options;
             }, function () {
-                return Promise.reject(new errors.NoPermissionError('You do not have permission to destroy notifications.'));
+                return Promise.reject(new errors.NoPermissionError('您没有权限关闭该通知。'));
             });
         }
 
@@ -140,12 +140,12 @@ notifications = {
 
             if (notification && !notification.dismissible) {
                 return Promise.reject(
-                    new errors.NoPermissionError('You do not have permission to dismiss this notification.')
+                    new errors.NoPermissionError('您没有权限取消该通知。')
                 );
             }
 
             if (!notification) {
-                return Promise.reject(new errors.NotFoundError('Notification does not exist.'));
+                return Promise.reject(new errors.NotFoundError('通知不存在。'));
             }
 
             notificationsStore = _.reject(notificationsStore, function (element) {
@@ -181,7 +181,7 @@ notifications = {
 
             return notificationsStore;
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('You do not have permission to destroy notifications.'));
+            return Promise.reject(new errors.NoPermissionError('您没有权限销毁该通知。'));
         });
     }
 };

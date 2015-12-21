@@ -7,12 +7,12 @@ export default BaseValidator.create({
         let title = model.get('title');
 
         if (validator.empty(title)) {
-            model.get('errors').add('title', 'You must specify a title for the post.');
+            model.get('errors').add('title', '请填写博文标题。');
             this.invalidate();
         }
 
         if (!validator.isLength(title, 0, 150)) {
-            model.get('errors').add('title', 'Title cannot be longer than 150 characters.');
+            model.get('errors').add('title', '标题不能超过150字。');
             this.invalidate();
         }
     },
@@ -21,7 +21,7 @@ export default BaseValidator.create({
         let metaTitle = model.get('meta_title');
 
         if (!validator.isLength(metaTitle, 0, 150)) {
-            model.get('errors').add('meta_title', 'Meta Title cannot be longer than 150 characters.');
+            model.get('errors').add('meta_title', 'Meta 标题不能超过150字。');
             this.invalidate();
         }
     },
@@ -30,7 +30,7 @@ export default BaseValidator.create({
         let metaDescription = model.get('meta_description');
 
         if (!validator.isLength(metaDescription, 0, 200)) {
-            model.get('errors').add('meta_description', 'Meta Description cannot be longer than 200 characters.');
+            model.get('errors').add('meta_description', 'Meta 摘要不能超过200字。');
             this.invalidate();
         }
     }

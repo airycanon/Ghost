@@ -166,7 +166,7 @@ themes = {
                 });
 
                 if (!theme) {
-                    return Promise.reject(new errors.BadRequestError('Theme does not exist.'));
+                    return Promise.reject(new errors.BadRequestError('主题不存在。'));
                 }
 
                 if (!theme.name) {

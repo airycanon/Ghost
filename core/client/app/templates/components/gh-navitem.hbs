@@ -1,12 +1,12 @@
 {{#unless navItem.last}}
     <span class="gh-blognav-grab icon-grab">
-        <span class="sr-only">Reorder</span>
+        <span class="sr-only">排序</span>
     </span>
 {{/unless}}
 
 <div class="gh-blognav-line">
     {{#gh-validation-status-container tagName="span" class="gh-blognav-label" errors=navItem.errors property="label" hasValidated=navItem.hasValidated}}
-        {{gh-trim-focus-input focus=navItem.last placeholder="Label" value=navItem.label}}
+        {{gh-trim-focus-input focus=navItem.last placeholder="名称" value=navItem.label}}
         {{gh-error-message errors=navItem.errors property="label"}}
     {{/gh-validation-status-container}}
     {{#gh-validation-status-container tagName="span" class="gh-blognav-url" errors=navItem.errors property="url" hasValidated=navItem.hasValidated}}
@@ -17,10 +17,10 @@
 
 {{#if navItem.last}}
     <button type="button" class="gh-blognav-add" {{action "addItem"}}>
-        <i class="icon-add2"><span class="sr-only">Add</span></i>
+        <i class="icon-add2"><span class="sr-only">添加</span></i>
     </button>
 {{else}}
     <button type="button" class="gh-blognav-delete" {{action "deleteItem" navItem}}>
-        <i class="icon-trash"><span class="sr-only">Delete</span></i>
+        <i class="icon-trash"><span class="sr-only">删除</span></i>
     </button>
 {{/if}}

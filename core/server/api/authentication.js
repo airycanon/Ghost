@@ -94,7 +94,7 @@ authentication = {
                     mail: [{
                         message: {
                             to: email,
-                            subject: 'Reset Password',
+                            subject: '重置密码',
                             html: emailContent.html,
                             text: emailContent.text
                         },
@@ -103,7 +103,7 @@ authentication = {
                 };
                 return mail.send(payload, {context: {internal: true}});
             }).then(function () {
-                return Promise.resolve({passwordreset: [{message: 'Check your email for further instructions.'}]});
+                return Promise.resolve({passwordreset: [{message: '密码重置说明已发送至您的邮箱，请注意查收。'}]});
             }).catch(function (error) {
                 return Promise.reject(error);
             });
@@ -143,7 +143,7 @@ authentication = {
                     dbHash: dbHash
                 });
             }).then(function () {
-                return Promise.resolve({passwordreset: [{message: 'Password changed successfully.'}]});
+                return Promise.resolve({passwordreset: [{message: '密码修改成功。'}]});
             }).catch(function (error) {
                 return Promise.reject(new errors.UnauthorizedError(error.message));
             });
@@ -258,7 +258,7 @@ authentication = {
         }).then(function (emailContent) {
             var message = {
                     to: setupUser.email,
-                    subject: 'Your New Ghost Blog',
+                    subject: '您的 Ghost 博客成功开启',
                     html: emailContent.html,
                     text: emailContent.text
                 },

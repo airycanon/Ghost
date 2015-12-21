@@ -2,7 +2,7 @@ import BaseValidator from './base';
 
 export default BaseValidator.create({
     properties: ['identification', 'signin', 'forgotPassword'],
-    invalidMessage: 'Email address is not valid',
+    invalidMessage: '邮箱格式不正确',
 
     identification(model) {
         let id = model.get('identification');

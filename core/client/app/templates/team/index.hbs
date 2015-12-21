@@ -1,10 +1,10 @@
 <section class="gh-view">
     <header class="view-header">
-        {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>Team</span>{{/gh-view-title}}
+        {{#gh-view-title openMobileMenu="openMobileMenu"}}<span>团队</span>{{/gh-view-title}}
         {{!-- Do not show Invite user button to authors --}}
         {{#unless session.user.isAuthor}}
             <section class="view-actions">
-                <button class="btn btn-green" {{action "openModal" "invite-new-user"}} >Invite People</button>
+                <button class="btn btn-green" {{action "openModal" "invite-new-user"}} >邀请新用户</button>
             </section>
         {{/unless}}
     </header>

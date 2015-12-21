@@ -2,7 +2,7 @@ import AuthenticatedRoute from 'ghost/routes/authenticated';
 import base from 'ghost/mixins/editor-base-route';
 
 export default AuthenticatedRoute.extend(base, {
-    titleToken: 'Editor',
+    titleToken: '编辑',
 
     model() {
         return this.get('session.user').then((user) => {
