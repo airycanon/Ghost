@@ -63,7 +63,7 @@ export default Controller.extend(ValidationEngine, {
                 if (error) {
                     this.get('notifications').showAPIError(error, {key: 'signin.authenticate'});
                 } else {
-                    this.set('flowErrors', 'Please fill out the form to sign in.');
+                    this.set('flowErrors', '请完整填写登录表单。');
                 }
             });
         },
@@ -86,7 +86,7 @@ export default Controller.extend(ValidationEngine, {
                     }
                 }).then(() => {
                     this.toggleProperty('submitting');
-                    notifications.showAlert('Please check your email for instructions.', {type: 'info', key: 'forgot-password.send.success'});
+                    notifications.showAlert('请至您的邮箱查看重置密码说明', {type: 'info', key: 'forgot-password.send.success'});
                 }).catch((resp) => {
                     this.toggleProperty('submitting');
                     if (resp && resp.jqXHR && resp.jqXHR.responseJSON && resp.jqXHR.responseJSON.errors) {
@@ -99,11 +99,11 @@ export default Controller.extend(ValidationEngine, {
                             this.get('model.errors').add('identification', '');
                         }
                     } else {
-                        notifications.showAPIError(resp, {defaultErrorText: 'There was a problem with the reset, please try again.', key: 'forgot-password.send'});
+                        notifications.showAPIError(resp, {defaultErrorText: '重置密码失败，请重试。', key: 'forgot-password.send'});
                     }
                 });
             }).catch(() => {
-                this.set('flowErrors', 'We need your email address to reset your password!');
+                this.set('flowErrors', '请输入您的邮箱。');
             });
         }
     }

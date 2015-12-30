@@ -105,7 +105,7 @@ function initNotifications() {
                 'Ghost 正在尝试使用默认配置发送邮件',
                 '建议您手动配置邮件服务器。',
                 '更多说明请访问 <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a>。'
-            ].join(' ')
+            ].join('，')
         }]}, {context: {internal: true}});
     }
     if (mailer.state && mailer.state.emailDisabled) {
@@ -114,7 +114,7 @@ function initNotifications() {
             message: [
                 'Ghost 目前无法发送邮件',
                 '更多说明请访问 <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a>。'
-            ].join(' ')
+            ].join('，')
         }]}, {context: {internal: true}});
     }
 }

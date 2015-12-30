@@ -525,20 +525,20 @@ User = ghostBookshelf.Model.extend({
             s;
         return this.getByEmail(object.email).then(function then(user) {
             if (!user) {
-                return Promise.reject(new errors.NotFoundError('There is no user with that email address.'));
+                return Promise.reject(new errors.NotFoundError('用户邮箱不存在。'));
             }
             if (user.get('status') === 'invited' || user.get('status') === 'invited-pending' ||
                     user.get('status') === 'inactive'
                 ) {
-                return Promise.reject(new errors.NoPermissionError('The user with that email address is inactive.'));
+                return Promise.reject(new errors.NoPermissionError('该用户尚未激活。'));
             }
             if (user.get('status') !== 'locked') {
                 return bcryptCompare(object.password, user.get('password')).then(function then(matched) {
                     if (!matched) {
                         return Promise.resolve(self.setWarning(user, {validate: false})).then(function then(remaining) {
                             s = (remaining > 1) ? 's' : '';
-                            return Promise.reject(new errors.UnauthorizedError('Your password is incorrect. <br />' +
-                                remaining + ' attempt' + s + ' remaining!'));
+                            return Promise.reject(new errors.UnauthorizedError('您的密码不正确 <br />' +
+                                '还可以尝试 ' + remaining + ' 次'));
 
                             // Use comma structure, not .catch, because we don't want to catch incorrect passwords
                         }, function handleError(error) {
@@ -549,7 +549,7 @@ User = ghostBookshelf.Model.extend({
                                 'Error thrown from user update during login',
                                 'Visit and save your profile after logging in to check for problems.'
                             );
-                            return Promise.reject(new errors.UnauthorizedError('Your password is incorrect.'));
+                            return Promise.reject(new errors.UnauthorizedError('您的密码不正确。'));
                         });
                     }
 
@@ -566,11 +566,10 @@ User = ghostBookshelf.Model.extend({
                         });
                 }, errors.logAndThrowError);
             }
-            return Promise.reject(new errors.NoPermissionError('Your account is locked. Please reset your password ' +
-                'to log in again by clicking the "Forgotten password?" link!'));
+            return Promise.reject(new errors.NoPermissionError('您的账户已被锁定，请点击 "忘记密码？" 链接重置密码。'));
         }, function handleError(error) {
             if (error.message === 'NotFound' || error.message === 'EmptyResponse') {
-                return Promise.reject(new errors.NotFoundError('There is no user with that email address.'));
+                return Promise.reject(new errors.NotFoundError('用户邮箱不存在。'));
             }
 
             return Promise.reject(error);
