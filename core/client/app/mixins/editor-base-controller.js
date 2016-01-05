@@ -216,7 +216,7 @@ export default Mixin.create({
         let notifications = this.get('notifications');
 
         if (status === 'published') {
-            message += `&nbsp;<a href="${path}">查看 ${type}</a>`;
+            message += `&nbsp;<a href="${path}">查看${type}</a>`;
         }
 
         notifications.showNotification(message.htmlSafe(), {delayed: delay});
