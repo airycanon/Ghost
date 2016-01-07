@@ -103,7 +103,7 @@ function initNotifications() {
             type: 'info',
             message: [
                 'Ghost 正在尝试使用默认配置发送邮件',
-                '建议您手动配置邮件服务器。',
+                '建议您手动配置邮件服务器',
                 '更多说明请访问 <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a>。'
             ].join('，')
         }]}, {context: {internal: true}});
