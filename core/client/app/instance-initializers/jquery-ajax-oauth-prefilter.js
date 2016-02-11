@@ -3,7 +3,7 @@ import Ember from 'ember';
 const {merge} = Ember;
 
 export default {
-    name: 'oauth-prefilter',
+    name: 'jquery-ajax-oauth-prefilter',
     after: 'ember-simple-auth',
 
     initialize(application) {
