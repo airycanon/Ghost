@@ -1,0 +1,18 @@
+<header class="modal-header">
+    <h1>即将删除该标签</h1>
+</header>
+<a class="close icon-x" href="" title="关闭" {{action "closeModal"}}><span class="hidden">关闭</span></a>
+
+<div class="modal-body">
+    <strong>警告：</strong>
+    {{#if tag.post_count}}
+        <span class="red">该标签已被{{tag.count.posts}} {{postInflection}}使用。</span>
+    {{/if}}
+    您将要删除标签 "<strong>{{tag.name}}</strong>"。<br />
+    删除后无法恢复，是否确认？
+</div>
+
+<div class="modal-footer">
+    <button {{action "closeModal"}} class="btn btn-default btn-minor">取消</button>
+    {{#gh-spin-button action="confirm" class="btn btn-red" submitting=submitting}}确认{{/gh-spin-button}}
+</div>

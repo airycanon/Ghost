@@ -31,25 +31,25 @@ export default BaseValidator.create({
         let description = model.get('description');
 
         if (!validator.isLength(description, 0, 200)) {
-            model.get('errors').add('description', '简介不能超过200字符。');
+            model.get('errors').add('description', '简介不能超过200字。');
             this.invalidate();
         }
     },
 
     metaTitle(model) {
-        let metaTitle = model.get('meta_title');
+        let metaTitle = model.get('metaTitle');
 
         if (!validator.isLength(metaTitle, 0, 150)) {
-            model.get('errors').add('meta_title', 'Meta 标题不能超过150字符。');
+            model.get('errors').add('metaTitle', 'Meta 标题不能超过150字。');
             this.invalidate();
         }
     },
 
     metaDescription(model) {
-        let metaDescription = model.get('meta_description');
+        let metaDescription = model.get('metaDescription');
 
         if (!validator.isLength(metaDescription, 0, 200)) {
-            model.get('errors').add('meta_description', 'Meta 简介不能超过200字符。');
+            model.get('errors').add('metaDescription', 'Meta 简介不能超过200字。');
             this.invalidate();
         }
     }

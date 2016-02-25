@@ -37,7 +37,7 @@ export default AuthenticatedRoute.extend(base, NotFoundHandler, {
                 return post;
             }
 
-            return this.replaceRoute('posts.index');
+            return this.replaceWith('posts.index');
         });
     },
 
@@ -46,7 +46,7 @@ export default AuthenticatedRoute.extend(base, NotFoundHandler, {
 
         return this.get('session.user').then((user) => {
             if (user.get('isAuthor') && !post.isAuthoredByUser(user)) {
-                return this.replaceRoute('posts.index');
+                return this.replaceWith('posts.index');
             }
         });
     },
@@ -59,7 +59,7 @@ export default AuthenticatedRoute.extend(base, NotFoundHandler, {
 
     actions: {
         authorizationFailed() {
-            this.send('openModal', 'signin');
+            this.get('controller').send('toggleReAuthenticateModal');
         }
     }
 });

@@ -1,5 +1,4 @@
 /*globals describe, before, afterEach, it */
-/*jshint expr:true*/
 var testUtils         = require('../../utils'),
     should            = require('should'),
 
@@ -59,6 +58,7 @@ describe('Configuration API', function () {
             testUtils.API.checkResponse(response.configuration[0], 'configuration');
             response.configuration[0].key.should.equal('database');
             response.configuration[0].value.should.equal('mysql');
+            response.configuration[0].type.should.be.null();
             /*jshint unused:false */
             done();
         }).catch(function (error) {

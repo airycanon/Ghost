@@ -15,6 +15,10 @@ let configStub = Ember.Service.extend({
     blogUrl: 'http://localhost:2368'
 });
 
+let mediaQueriesStub = Ember.Service.extend({
+    maxWidth600: false
+});
+
 describeComponent(
     'gh-tag-settings-form',
     'Integration: Component: gh-tag-settings-form',
@@ -29,8 +33,8 @@ describeComponent(
                 name: 'Test',
                 slug: 'test',
                 description: 'Description.',
-                meta_title: 'Meta Title',
-                meta_description: 'Meta description',
+                metaTitle: 'Meta Title',
+                metaDescription: 'Meta description',
                 errors: DS.Errors.create(),
                 hasValidated: []
             });
@@ -44,18 +48,21 @@ describeComponent(
 
             this.register('service:config', configStub);
             this.inject.service('config', {as: 'config'});
+
+            this.register('service:media-queries', mediaQueriesStub);
+            this.inject.service('media-queries', {as: 'mediaQueries'});
         });
 
         it('renders', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
             expect(this.$()).to.have.length(1);
         });
 
         it('has the correct title', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
             expect(this.$('.tag-settings-pane h4').text(), 'existing tag title').to.equal('Tag Settings');
 
@@ -65,20 +72,20 @@ describeComponent(
 
         it('renders main settings', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
 
             expect(this.$('.image-uploader').length, 'displays image uploader').to.equal(1);
             expect(this.$('input[name="name"]').val(), 'name field value').to.equal('Test');
             expect(this.$('input[name="slug"]').val(), 'slug field value').to.equal('test');
             expect(this.$('textarea[name="description"]').val(), 'description field value').to.equal('Description.');
-            expect(this.$('input[name="meta_title"]').val(), 'meta_title field value').to.equal('Meta Title');
-            expect(this.$('textarea[name="meta_description"]').val(), 'meta_description field value').to.equal('Meta description');
+            expect(this.$('input[name="metaTitle"]').val(), 'metaTitle field value').to.equal('Meta Title');
+            expect(this.$('textarea[name="metaDescription"]').val(), 'metaDescription field value').to.equal('Meta description');
         });
 
         it('can switch between main/meta settings', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
 
             expect(this.$('.tag-settings-pane').hasClass('settings-menu-pane-in'), 'main settings are displayed by default').to.be.true;
@@ -105,22 +112,22 @@ describeComponent(
             });
 
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
 
             run(() => {
                 this.$('input[name="name"]').val('New name');
                 this.$('input[name="slug"]').val('new-slug');
                 this.$('textarea[name="description"]').val('New description');
-                this.$('input[name="meta_title"]').val('New meta_title');
-                this.$('textarea[name="meta_description"]').val('New meta_description');
+                this.$('input[name="metaTitle"]').val('New metaTitle');
+                this.$('textarea[name="metaDescription"]').val('New metaDescription');
             });
 
             expect(this.get('tag.name'), 'tag name').to.equal('Test');
             expect(this.get('tag.slug'), 'tag slug').to.equal('test');
             expect(this.get('tag.description'), 'tag description').to.equal('Description.');
-            expect(this.get('tag.meta_title'), 'tag meta_title').to.equal('Meta Title');
-            expect(this.get('tag.meta_description'), 'tag meta_description').to.equal('Meta description');
+            expect(this.get('tag.metaTitle'), 'tag metaTitle').to.equal('Meta Title');
+            expect(this.get('tag.metaDescription'), 'tag metaDescription').to.equal('Meta description');
         });
 
         it('triggers setProperty action on blur of all fields', function () {
@@ -133,7 +140,7 @@ describeComponent(
             });
 
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
 
             expectedProperty = 'name';
@@ -154,16 +161,16 @@ describeComponent(
                 this.$('textarea[name="description"]').val('New description');
             });
 
-            expectedProperty = 'meta_title';
-            expectedValue = 'New meta_title';
+            expectedProperty = 'metaTitle';
+            expectedValue = 'New metaTitle';
             run(() => {
-                this.$('input[name="meta_title"]').val('New meta_title');
+                this.$('input[name="metaTitle"]').val('New metaTitle');
             });
 
-            expectedProperty = 'meta_description';
-            expectedValue = 'New meta_description';
+            expectedProperty = 'metaDescription';
+            expectedValue = 'New metaDescription';
             run(() => {
-                this.$('textarea[name="meta_description"]').val('New meta_description');
+                this.$('textarea[name="metaDescription"]').val('New metaDescription');
             });
         });
 
@@ -180,14 +187,14 @@ describeComponent(
             errors.add('description', 'is too long');
             hasValidated.push('description');
 
-            errors.add('meta_title', 'is too long');
-            hasValidated.push('meta_title');
+            errors.add('metaTitle', 'is too long');
+            hasValidated.push('metaTitle');
 
-            errors.add('meta_description', 'is too long');
-            hasValidated.push('meta_description');
+            errors.add('metaDescription', 'is too long');
+            hasValidated.push('metaDescription');
 
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
 
             let nameFormGroup = this.$('input[name="name"]').closest('.form-group');
@@ -201,37 +208,37 @@ describeComponent(
             let descriptionFormGroup = this.$('textarea[name="description"]').closest('.form-group');
             expect(descriptionFormGroup.hasClass('error'), 'description form group has error state').to.be.true;
 
-            let metaTitleFormGroup = this.$('input[name="meta_title"]').closest('.form-group');
-            expect(metaTitleFormGroup.hasClass('error'), 'meta_title form group has error state').to.be.true;
-            expect(metaTitleFormGroup.find('.response').length, 'meta_title form group has error message').to.equal(1);
+            let metaTitleFormGroup = this.$('input[name="metaTitle"]').closest('.form-group');
+            expect(metaTitleFormGroup.hasClass('error'), 'metaTitle form group has error state').to.be.true;
+            expect(metaTitleFormGroup.find('.response').length, 'metaTitle form group has error message').to.equal(1);
 
-            let metaDescriptionFormGroup = this.$('textarea[name="meta_description"]').closest('.form-group');
-            expect(metaDescriptionFormGroup.hasClass('error'), 'meta_description form group has error state').to.be.true;
-            expect(metaDescriptionFormGroup.find('.response').length, 'meta_description form group has error message').to.equal(1);
+            let metaDescriptionFormGroup = this.$('textarea[name="metaDescription"]').closest('.form-group');
+            expect(metaDescriptionFormGroup.hasClass('error'), 'metaDescription form group has error state').to.be.true;
+            expect(metaDescriptionFormGroup.find('.response').length, 'metaDescription form group has error message').to.equal(1);
         });
 
         it('displays char count for text fields', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
 
             let descriptionFormGroup = this.$('textarea[name="description"]').closest('.form-group');
             expect(descriptionFormGroup.find('.word-count').text(), 'description char count').to.equal('12');
 
-            let metaDescriptionFormGroup = this.$('textarea[name="meta_description"]').closest('.form-group');
+            let metaDescriptionFormGroup = this.$('textarea[name="metaDescription"]').closest('.form-group');
             expect(metaDescriptionFormGroup.find('.word-count').text(), 'description char count').to.equal('16');
         });
 
         it('renders SEO title preview', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
             expect(this.$('.seo-preview-title').text(), 'displays meta title if present').to.equal('Meta Title');
 
             run(() => {
-                this.set('tag.meta_title', '');
+                this.set('tag.metaTitle', '');
             });
-            expect(this.$('.seo-preview-title').text(), 'falls back to tag name without meta_title').to.equal('Test');
+            expect(this.$('.seo-preview-title').text(), 'falls back to tag name without metaTitle').to.equal('Test');
 
             run(() => {
                 this.set('tag.name', (new Array(151).join('x')));
@@ -242,7 +249,7 @@ describeComponent(
 
         it('renders SEO URL preview', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
             expect(this.$('.seo-preview-link').text(), 'adds url and tag prefix').to.equal('http://localhost:2368/tag/test/');
 
@@ -255,14 +262,14 @@ describeComponent(
 
         it('renders SEO description preview', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
             expect(this.$('.seo-preview-description').text(), 'displays meta description if present').to.equal('Meta description');
 
             run(() => {
-                this.set('tag.meta_description', '');
+                this.set('tag.metaDescription', '');
             });
-            expect(this.$('.seo-preview-description').text(), 'falls back to tag description without meta_description').to.equal('Description.');
+            expect(this.$('.seo-preview-description').text(), 'falls back to tag description without metaDescription').to.equal('Description.');
 
             run(() => {
                 this.set('tag.description', (new Array(200).join('x')));
@@ -273,7 +280,7 @@ describeComponent(
 
         it('resets if a new tag is received', function () {
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
             `);
             run(() => {
                 this.$('.meta-data-button').click();
@@ -287,19 +294,29 @@ describeComponent(
         });
 
         it('triggers delete tag modal on delete click', function (done) {
-            this.set('actions.openModal', (modalName, model) => {
-                expect(modalName, 'passed modal name').to.equal('delete-tag');
-                expect(model, 'passed model').to.equal(this.get('tag'));
+            // TODO: will time out if this isn't hit, there's probably a better
+            // way of testing this
+            this.set('actions.openModal', () => {
                 done();
             });
 
             this.render(hbs`
-                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') openModal='openModal'}}
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty') showDeleteTagModal=(action 'openModal')}}
             `);
 
             run(() => {
                 this.$('.tag-delete-button').click();
             });
+        });
+
+        it('shows settings.tags arrow link on mobile', function () {
+            this.set('mediaQueries.maxWidth600', true);
+
+            this.render(hbs`
+                {{gh-tag-settings-form tag=tag setProperty=(action 'setProperty')}}
+            `);
+
+            expect(this.$('.tag-settings-pane .settings-menu-header .settings-menu-header-action').length, 'settings.tags link is shown').to.equal(1);
         });
     }
 );

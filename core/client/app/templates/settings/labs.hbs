@@ -47,13 +47,17 @@
             <fieldset>
                 <div class="form-group for-checkbox">
                     <h3>启用测试功能</h3>
-                    <label class="checkbox" for="labs-publicAPI">
-                        {{input id="labs-publicAPI" name="labs[publicAPI]" type="checkbox" checked=usePublicAPI}}
-                        <span class="input-toggle-component"></span>
-                        <p>公开 API - 详细说明请访问 <a href="http://support.ghost.org/public-api-beta/">开发者指南</a>。</p>
-                    </label>
+                    {{#gh-feature-flag "publicAPI"}}
+                        Public API - 详细说明请访问 <a href="http://support.ghost.org/public-api-beta/">开发者指南</a>.
+                    {{/gh-feature-flag}}
                 </div>
             </fieldset>
         </form>
     </section>
 </section>
+
+{{#if showDeleteAllModal}}
+    {{gh-fullscreen-modal "delete-all"
+                          close=(action "toggleDeleteAllModal")
+                          modifier="action wide"}}
+{{/if}}

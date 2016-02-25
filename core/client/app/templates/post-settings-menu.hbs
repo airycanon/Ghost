@@ -12,11 +12,11 @@
                 <label for="url">博文链接</label>
                 {{#if model.isPublished}}
                 <a class="post-view-link" target="_blank" href="{{model.absoluteUrl}}">
-                    查看博文 <i class="icon-external"></i>
+                    查看博文<i class="icon-external"></i>
                 </a>
                 {{else}}
                 <a class="post-view-link" target="_blank" href="{{model.previewUrl}}">
-                    预览 <i class="icon-external"></i>
+                    预览<i class="icon-external"></i>
                 </a>
                 {{/if}}
 
@@ -28,7 +28,7 @@
 
             {{#gh-form-group errors=model.errors property="post-setting-date"}}
                 <label for="post-setting-date">发布时间</label>
-                {{gh-datetime-input value=model.published_at
+                {{gh-datetime-input value=model.publishedAt
                                     update=(action "setPublishedAt")
                                     inputClass="post-setting-date"
                                     inputId="post-setting-date"
@@ -74,7 +74,7 @@
                 {{#gh-tab tagName="li" classNames="nav-list-item"}}
                     <button type="button">
                         <b>Meta 标签</b>
-                        <span>优化在搜索引擎和社交媒体中的呈现效果。</span>
+                        <span>优化在搜索引擎和社交媒体中的呈现效果</span>
                     </button>
                     <i class="icon-arrow-right"></i>
                 {{/gh-tab}}
@@ -110,16 +110,16 @@
         <div class="settings-menu-content">
             <form {{action "discardEnter" on="submit"}}>
             {{#gh-form-group errors=model.errors property="meta_title"}}
-                <label for="meta-title">Meta 标题</label>
+                <label for="meta-title">Meta Title</label>
                 {{gh-input class="post-setting-meta-title" id="meta-title" value=metaTitleScratch name="post-setting-meta-title" focus-out="setMetaTitle" stopEnterKeyDownPropagation="true"}}
-                <p><b>70</b> 字以内效果最佳。{{gh-count-down-characters metaTitleScratch 70}}</p>
+                <p><b>70</b> 字以内效果最佳，已输入 {{gh-count-down-characters metaTitleScratch 70}} 字。</p>
                 {{gh-error-message errors=model.errors property="meta_title"}}
             {{/gh-form-group}}
 
             {{#gh-form-group errors=model.errors property="meta_description"}}
-                <label for="meta-description">Meta 摘要</label>
+                <label for="meta-description">Meta 简介</label>
                 {{gh-textarea class="gh-input post-setting-meta-description" id="meta-description" value=metaDescriptionScratch name="post-setting-meta-description" focus-out="setMetaDescription" stopEnterKeyDownPropagation="true"}}
-                <p><b>156</b> 字以内效果最佳。{{gh-count-down-characters metaDescriptionScratch 156}}</p>
+                <p><b>156</b> 字以内效果最佳，已输入 {{gh-count-down-characters metaDescriptionScratch 156}} 字</p>
                 {{gh-error-message errors=model.errors property="meta_description"}}
             {{/gh-form-group}}
 
