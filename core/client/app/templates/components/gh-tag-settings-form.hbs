@@ -1,7 +1,7 @@
 <div class="{{if isViewingSubview 'settings-menu-pane-out-left' 'settings-menu-pane-in'}} settings-menu settings-menu-pane tag-settings-pane">
     <div class="settings-menu-header {{if isMobile 'subview'}}">
         {{#if isMobile}}
-            {{#link-to 'settings.tags' class="back icon-arrow-left settings-menu-header-action"}}<span class="hidden">Back</span>{{/link-to}}
+            {{#link-to 'settings.tags' class="back icon-arrow-left settings-menu-header-action"}}<span class="hidden">返回</span>{{/link-to}}
             <h4>{{title}}</h4>
             <div style="width:23px;">{{!flexbox space-between}}</div>
         {{else}}
@@ -68,7 +68,7 @@
                 <label for="meta-description">Meta Description</label>
                 {{gh-textarea id="meta-description" name="metaDescription" value=scratchMetaDescription focus-out=(action 'setProperty' 'metaDescription')}}
                 {{gh-error-message errors=tag.errors property="metaDescription"}}
-                <p><b>156</b> 字以内效果最佳，已输入 {{gh-count-down-characters scratchMetaDescription 156}} 字</p>
+                <p><b>156</b> 字以内效果最佳，已输入 {{gh-count-down-characters scratchMetaDescription 156}} 字。</p>
             {{/gh-form-group}}
 
             <div class="form-group">

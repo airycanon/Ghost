@@ -1,9 +1,0 @@
-{{#gh-modal-dialog action="closeModal" showClose=true type="action" style="wide"
-    title="确认要删除该标签吗?" confirm=confirm}}
-
-    {{#if model.count.posts}}
-        <span class="red">该标签已被 {{model.count.posts}} {{postInflection}}使用。</span> 将要删除标签 "<strong>{{model.name}}</strong>"，删除后无法恢复，是否确认删除？
-    {{else}}
-        标签 "<strong>{{model.name}}，</strong>"删除后将无法恢复，是否确认删除？
-    {{/if}}
-{{/gh-modal-dialog}}
