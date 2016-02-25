@@ -5,7 +5,7 @@
 
 <div class="modal-body">
     {{#if user.count.posts}}
-        <strong>警告:</strong> <span class="red">该用户是{{pluralize user.count.posts '篇文章'}}的作者，</span>您将要删除该用户的<strong>所有数据和文章</strong>。</br>
+        <strong>警告:</strong> <span class="red">该用户是{{pluralize user.count.posts '篇文章'}}的作者，</span>您将要删除该用户的<strong>所有数据和文章</strong>。<br/>
     {{else}}
         <strong>警告:</strong>您将要删除该用户的<strong>所有数据</strong>。<br/>
     {{/if}}
