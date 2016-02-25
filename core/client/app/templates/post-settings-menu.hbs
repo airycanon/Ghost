@@ -2,17 +2,17 @@
 <div id="entry-controls">
     <div class="{{if isViewingSubview 'settings-menu-pane-out-left' 'settings-menu-pane-in'}} settings-menu settings-menu-pane">
         <div class="settings-menu-header">
-            <h4>博文选项</h4>
+            <h4>文章选项</h4>
             <button class="close icon-x settings-menu-header-action" {{action "closeMenus"}}><span class="hidden">关闭</span></button>
         </div>
         <div class="settings-menu-content">
             {{gh-uploader uploaded="setCoverImage" canceled="clearCoverImage" description="添加图片" image=model.image uploaderReference=uploaderReference tagName="section"}}
             <form>
             <div class="form-group">
-                <label for="url">博文链接</label>
+                <label for="url">文章链接</label>
                 {{#if model.isPublished}}
                 <a class="post-view-link" target="_blank" href="{{model.absoluteUrl}}">
-                    查看博文<i class="icon-external"></i>
+                    查看文章<i class="icon-external"></i>
                 </a>
                 {{else}}
                 <a class="post-view-link" target="_blank" href="{{model.previewUrl}}">
@@ -84,13 +84,13 @@
                 <label class="checkbox" for="static-page" {{action "togglePage" bubbles="false"}}>
                     {{input type="checkbox" name="static-page" id="static-page" class="gh-input post-setting-static-page" checked=model.page}}
                     <span class="input-toggle-component"></span>
-                    <p>把该博文转化为静态页面</p>
+                    <p>把该文章转化为静态页面</p>
                 </label>
 
                 <label class="checkbox" for="featured" {{action "toggleFeatured" bubbles="false"}}>
                     {{input type="checkbox" name="featured" id="featured" class="gh-input post-setting-featured" checked=model.featured}}
                     <span class="input-toggle-component"></span>
-                    <p>使该博文成为专题</p>
+                    <p>使该文章成为专题</p>
                 </label>
             </div>
 

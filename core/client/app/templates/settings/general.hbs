@@ -22,7 +22,7 @@
                     {{gh-textarea id="blog-description" class="gh-input" name="general[description]" value=model.description focusOut=(action "validate" "description")}}
                     {{gh-error-message errors=model.errors property="description"}}
                     <p>
-                        简单描述一下您的博客，不超过 <b>200</b> 字。{{gh-count-down-characters  model.description 200}}
+                        简单描述一下您的博客，不超过 <b>200</b> 字，已输入{{gh-count-down-characters  model.description 200}} 字。
                     </p>
                 {{/gh-form-group}}
             </fieldset>
@@ -30,9 +30,9 @@
             <div class="form-group">
                 <label>博客 Logo</label>
                 {{#if model.logo}}
-                    <img class="blog-logo" src="{{model.logo}}" alt="logo" role="button" {{action "openModal" "upload" this "logo"}}>
+                    <img class="blog-logo" src="{{model.logo}}" alt="logo" role="button" {{action "toggleUploadLogoModal"}}>
                 {{else}}
-                    <button type="button" class="btn btn-green js-modal-logo" {{action "openModal" "upload" this "logo"}}>上传图片</button>
+                    <button type="button" class="btn btn-green js-modal-logo" {{action "toggleUploadLogoModal"}}>上传图片</button>
                 {{/if}}
                 <p>上传一个漂亮的 LOGO</p>
             </div>
@@ -42,26 +42,33 @@
                 {{#if model.cover}}
                     <img class="blog-cover" src="{{model.cover}}" alt="cover photo" role="button" {{action "openModal" "upload" this "cover"}}>
                 {{else}}
-                    <button type="button" class="btn btn-green js-modal-cover" {{action "openModal" "upload" this "cover"}}>上传图片</button>
+                    <button type="button" class="btn btn-green js-modal-cover" {{action "toggleUploadCoverModal"}}>上传图片</button>
                 {{/if}}
                 <p>上传一个漂亮的封面</p>
+
+                {{#if showUploadCoverModal}}
+                    {{gh-fullscreen-modal "upload-image"
+                                          model=(hash model=model imageProperty="cover")
+                                          close=(action "toggleUploadCoverModal")
+                                          modifier="action wide"}}
+                {{/if}}
             </div>
 
             <fieldset>
 
                 <div class="form-group">
-                    <label for="postsPerPage">每页的博文数量</label>
+                    <label for="postsPerPage">每页的文章数量</label>
                     {{! `pattern` brings up numeric keypad allowing any number of digits}}
                     {{gh-input id="postsPerPage" class="gh-input" name="general[postsPerPage]" focus-out="checkPostsPerPage" value=model.postsPerPage min="1" max="1000" type="number" pattern="[0-9]*"}}
-                    <p>每个页面最多展示的博文数量</p>
+                    <p>每个页面最多展示的文章数量</p>
                 </div>
 
                 <div class="form-group for-checkbox">
-                    <label for="permalinks">博文链接</label>
+                    <label for="permalinks">文章链接</label>
                     <label class="checkbox" for="permalinks">
                         {{input id="permalinks" class="gh-input" name="general[permalinks]" type="checkbox" checked=isDatedPermalinks}}
                         <span class="input-toggle-component"></span>
-                        <p>在博文链接中显示日期</p>
+                        <p>在文章链接中显示日期</p>
                     </label>
                 </div>
 

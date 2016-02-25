@@ -3,7 +3,7 @@ import CurrentUserSettings from 'ghost/mixins/current-user-settings';
 import styleBody from 'ghost/mixins/style-body';
 
 export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, {
-    titleToken: '设置 - 代码',
+    titleToken: '设置 - 代码插入',
     classNames: ['settings-view-code'],
 
     beforeModel() {

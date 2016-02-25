@@ -12,7 +12,7 @@ export default BaseValidator.create({
 
         if (this.isActive(model)) {
             if (validator.empty(name)) {
-                model.get('errors').add('name', '请输入用户名');
+                model.get('errors').add('name', '请填写用户名');
                 this.invalidate();
             } else if (!validator.isLength(name, 0, 150)) {
                 model.get('errors').add('name', '用户名过长');
@@ -36,7 +36,7 @@ export default BaseValidator.create({
         let email = model.get('email');
 
         if (!validator.isEmail(email)) {
-            model.get('errors').add('email', '请填写邮箱。');
+            model.get('errors').add('email', '请填写邮箱');
             this.invalidate();
         }
     },
@@ -46,7 +46,7 @@ export default BaseValidator.create({
 
         if (this.isActive(model)) {
             if (!validator.isLength(location, 0, 150)) {
-                model.get('errors').add('location', '位置信息过长。');
+                model.get('errors').add('location', '位置信息过长');
                 this.invalidate();
             }
         }
@@ -61,7 +61,7 @@ export default BaseValidator.create({
                 (!validator.isURL(website, {require_protocol: false}) ||
                 !validator.isLength(website, 0, 2000))) {
 
-                model.get('errors').add('website', '网站链接格式不正确。');
+                model.get('errors').add('website', '网站链接格式不正确');
                 this.invalidate();
             }
         }
@@ -73,7 +73,7 @@ export default BaseValidator.create({
             let roles = model.get('roles');
 
             if (roles.length < 1) {
-                model.get('errors').add('role', '请选择角色。');
+                model.get('errors').add('role', '请选择角色');
                 this.invalidate();
             }
         }

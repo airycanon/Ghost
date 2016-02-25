@@ -10,7 +10,7 @@
                 <div class="form-group">
                     <label>数据导出</label>
                     <button type="button" class="btn btn-blue" {{action "exportData"}}>导出</button>
-                    <p>导出博客配置和博文数据</p>
+                    <p>导出博客配置和文章数据</p>
                 </div>
             </fieldset>
         </form>
@@ -20,7 +20,7 @@
                     <label>数据导入</label>
                     {{partial "import-errors"}}
                     {{gh-file-upload id="importfile" classNames="flex" uploadButtonText=uploadButtonText onUpload="onUpload"}}
-                <p>导入博客配置和博文数据。注意：如数据中包含用户信息，当前用户可能会被覆盖而无法登录。</p>
+                <p>导入博客配置和文章数据。注意：如数据中包含用户信息，当前用户可能会被覆盖而无法登录。</p>
                 </div>
             </fieldset>
         </form>
@@ -28,8 +28,8 @@
             <fieldset>
                 <div class="form-group">
                     <label>删除所有内容</label>
-                    <button type="button" class="btn btn-red js-delete" {{action "openModal" "deleteAll"}}>删除</button>
-                    <p>从数据库删除所有博文和标签。</p>
+                    <button type="button" class="btn btn-red js-delete" {{action "toggleDeleteAllModal"}}>删除</button>
+                    <p>从数据库删除所有文章和标签。</p>
                 </div>
             </fieldset>
         </form>

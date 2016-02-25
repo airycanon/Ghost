@@ -34,13 +34,13 @@ export default BaseValidator.create({
         let postsPerPage = model.get('postsPerPage');
 
         if (!validator.isInt(postsPerPage)) {
-            model.get('errors').add('postsPerPage', '每页显示博文数量应为数字');
+            model.get('errors').add('postsPerPage', '每页显示文章数量应为数字');
             this.invalidate();
         } else if (postsPerPage > 1000) {
-            model.get('errors').add('postsPerPage', '每页最多显示 1000 篇博文。');
+            model.get('errors').add('postsPerPage', '每页最多显示 1000 篇文章。');
             this.invalidate();
         } else if (postsPerPage < 1) {
-            model.get('errors').add('postsPerPage', '每页最少显示 1 篇博文。');
+            model.get('errors').add('postsPerPage', '每页最少显示 1 篇文章。');
             this.invalidate();
         }
     }

@@ -20,7 +20,7 @@ export default BaseValidator.create({
         model.get('errors').clear();
 
         if (validator.empty(id)) {
-            model.get('errors').add('identification', 'Please enter an email');
+            model.get('errors').add('identification', '请输入邮箱');
             this.invalidate();
         }
 
@@ -30,7 +30,7 @@ export default BaseValidator.create({
         }
 
         if (validator.empty(password)) {
-            model.get('errors').add('password', 'Please enter a password');
+            model.get('errors').add('password', '请输入密码');
             this.invalidate();
         }
     },

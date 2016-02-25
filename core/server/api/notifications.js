@@ -7,6 +7,7 @@ var Promise            = require('bluebird'),
     utils              = require('./utils'),
     pipeline           = require('../utils/pipeline'),
     canThis            = permissions.canThis,
+    i18n               = require('../i18n'),
 
     // Holds the persistent notifications
     notificationsStore = [],

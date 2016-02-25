@@ -7,7 +7,7 @@ export default NewUserValidator.create({
         let blogTitle = model.get('blogTitle');
 
         if (!validator.isLength(blogTitle, 1)) {
-            model.get('errors').add('blogTitle', '请填写博客标题。');
+            model.get('errors').add('blogTitle', '请填写博客标题');
             this.invalidate();
         }
     }

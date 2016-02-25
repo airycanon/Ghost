@@ -8,7 +8,7 @@ export default BaseValidator.create({
         let hasValidated = model.get('hasValidated');
 
         if (validator.empty(label)) {
-            model.get('errors').add('label', '请选定一个标签。');
+            model.get('errors').add('label', '请选定一个标签');
             this.invalidate();
         }
 
@@ -24,10 +24,10 @@ export default BaseValidator.create({
         let urlRegex = new RegExp(/^(\/|#|[a-zA-Z0-9\-]+:)/);
 
         if (validator.empty(url)) {
-            model.get('errors').add('url', '请选定一个链接或相对路径。');
+            model.get('errors').add('url', '请选定一个链接或相对路径');
             this.invalidate();
         } else if (url.match(/\s/) || (!validator.isURL(url, validatorOptions) && !url.match(urlRegex))) {
-            model.get('errors').add('url', '链接或相对路径格式不正确。');
+            model.get('errors').add('url', '链接或相对路径格式不正确');
             this.invalidate();
         }
 

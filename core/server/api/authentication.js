@@ -7,6 +7,7 @@ var _                = require('lodash'),
     Promise          = require('bluebird'),
     errors           = require('../errors'),
     config           = require('../config'),
+    i18n             = require('../i18n'),
     authentication;
 
 function setupTasks(object) {
