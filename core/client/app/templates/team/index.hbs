@@ -62,7 +62,7 @@
         {{/unless}}
 
         <section class="user-list active-users">
-            <h4 class="user-list-title">Active users</h4>
+            <h4 class="user-list-title">活动的用户</h4>
             {{#each activeUsers key="id" as |user|}}
                 {{!-- For authors only shows users as a list, otherwise show users with links to user page --}}
                 {{#unless session.user.isAuthor}}
