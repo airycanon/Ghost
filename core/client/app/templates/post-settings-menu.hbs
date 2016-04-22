@@ -110,7 +110,7 @@
         <div class="settings-menu-content">
             <form {{action "discardEnter" on="submit"}}>
             {{#gh-form-group errors=model.errors property="meta_title"}}
-                <label for="meta-title">Meta Title</label>
+                <label for="meta-title">Meta 标题</label>
                 {{gh-input class="post-setting-meta-title" id="meta-title" value=metaTitleScratch name="post-setting-meta-title" focus-out="setMetaTitle" stopEnterKeyDownPropagation="true"}}
                 <p><b>70</b> 字以内效果最佳，已输入 {{gh-count-down-characters metaTitleScratch 70}} 字。</p>
                 {{gh-error-message errors=model.errors property="meta_title"}}
