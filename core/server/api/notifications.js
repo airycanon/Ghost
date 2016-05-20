@@ -9,9 +9,9 @@ var Promise            = require('bluebird'),
     canThis            = permissions.canThis,
     i18n               = require('../i18n'),
 
-    // Holds the persistent notifications
+// Holds the persistent notifications
     notificationsStore = [],
-    // Holds the last used id
+// Holds the last used id
     notificationCounter = 0,
     notifications;
 
@@ -31,7 +31,7 @@ notifications = {
         return canThis(options.context).browse.notification().then(function () {
             return {notifications: notificationsStore};
         }, function () {
-            return Promise.reject(new errors.NoPermissionError('您没有权限查看该通知。'));
+            return Promise.reject(new errors.NoPermissionError(i18n.t('errors.api.notifications.noPermissionToBrowseNotif')));
         });
     },
 
@@ -66,7 +66,7 @@ notifications = {
             return canThis(options.context).add.notification().then(function () {
                 return options;
             }, function () {
-                return Promise.reject(new errors.NoPermissionError('您没有权限添加通知。'));
+                return Promise.reject(new errors.NoPermissionError(i18n.t('errors.api.notifications.noPermissionToAddNotif')));
             });
         }
 
@@ -130,7 +130,7 @@ notifications = {
             return canThis(options.context).destroy.notification().then(function () {
                 return options;
             }, function () {
-                return Promise.reject(new errors.NoPermissionError('您没有权限关闭该通知。'));
+                return Promise.reject(new errors.NoPermissionError(i18n.t('errors.api.notifications.noPermissionToDestroyNotif')));
             });
         }
 
@@ -141,12 +141,12 @@ notifications = {
 
             if (notification && !notification.dismissible) {
                 return Promise.reject(
-                    new errors.NoPermissionError('您没有权限取消该通知。')
+                    new errors.NoPermissionError(i18n.t('errors.api.notifications.noPermissionToDismissNotif'))
                 );
             }
 
             if (!notification) {
-                return Promise.reject(new errors.NotFoundError('通知不存在。'));
+                return Promise.reject(new errors.NotFoundError(i18n.t('errors.api.notifications.notificationDoesNotExist')));
             }
 
             notificationsStore = _.reject(notificationsStore, function (element) {

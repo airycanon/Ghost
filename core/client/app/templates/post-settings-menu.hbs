@@ -113,18 +113,18 @@
 
         <div class="settings-menu-content">
             <form {{action "discardEnter" on="submit"}}>
-            {{#gh-form-group errors=model.errors property="meta_title"}}
+            {{#gh-form-group errors=model.errors property="metaTitle"}}
                 <label for="meta-title">Meta Title</label>
                 {{gh-input class="post-setting-meta-title" id="meta-title" value=metaTitleScratch name="post-setting-meta-title" focus-out="setMetaTitle" stopEnterKeyDownPropagation="true"}}
                 <p><b>70</b> 字以内效果最佳，已输入 {{gh-count-down-characters metaTitleScratch 70}} 字。</p>
-                {{gh-error-message errors=model.errors property="meta_title"}}
+                {{gh-error-message errors=model.errors property="metaTitle"}}
             {{/gh-form-group}}
 
-            {{#gh-form-group errors=model.errors property="meta_description"}}
+            {{#gh-form-group errors=model.errors property="metaDescription"}}
                 <label for="meta-description">Meta 简介</label>
                 {{gh-textarea class="gh-input post-setting-meta-description" id="meta-description" value=metaDescriptionScratch name="post-setting-meta-description" focus-out="setMetaDescription" stopEnterKeyDownPropagation="true"}}
                 <p><b>156</b> 字以内效果最佳，已输入 {{gh-count-down-characters metaDescriptionScratch 156}} 字</p>
-                {{gh-error-message errors=model.errors property="meta_description"}}
+                {{gh-error-message errors=model.errors property="metaDescription"}}
             {{/gh-form-group}}
 
             <div class="form-group">

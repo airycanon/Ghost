@@ -67,7 +67,7 @@
                 {{!-- For authors only shows users as a list, otherwise show users with links to user page --}}
                 {{#unless session.user.isAuthor}}
                     {{#gh-user-active user=user as |component|}}
-                        {{#link-to 'team.user' user class="user-list-item"}}
+                        {{#link-to 'team.user' user.slug class="user-list-item"}}
                             {{partial 'user-list-item'}}
                         {{/link-to}}
                     {{/gh-user-active}}
