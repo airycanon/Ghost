@@ -1,17 +1,14 @@
-import Ember from 'ember';
-
-const {
-    Component,
-    computed,
-    inject: {service}
-} = Ember;
+import Component from 'ember-component';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import {htmlSafe} from 'ember-string';
 
 export default Component.extend({
     tagName: '',
 
     user: null,
 
-    ghostPaths: service(),
+    ghostPaths: injectService(),
 
     userDefault: computed('ghostPaths', function () {
         return `${this.get('ghostPaths.subdir')}/ghost/img/user-image.png`;
@@ -20,12 +17,12 @@ export default Component.extend({
     userImageBackground: computed('user.image', 'userDefault', function () {
         let url = this.get('user.image') || this.get('userDefault');
 
-        return Ember.String.htmlSafe(`background-image: url(${url})`);
+        return htmlSafe(`background-image: url(${url})`);
     }),
 
-    lastLogin: computed('user.lastLogin', function () {
-        let lastLogin = this.get('user.lastLogin');
+    lastLoginUTC: computed('user.lastLoginUTC', function () {
+        let lastLoginUTC = this.get('user.lastLoginUTC');
 
-        return lastLogin ? lastLogin.fromNow() : '(Never)';
+        return lastLoginUTC ? moment(lastLoginUTC).fromNow() : '(Never)';
     })
 });

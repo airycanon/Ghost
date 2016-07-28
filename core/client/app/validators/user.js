@@ -1,4 +1,5 @@
 import BaseValidator from './base';
+import {isBlank} from 'ember-utils';
 
 export default BaseValidator.create({
     properties: ['name', 'bio', 'email', 'location', 'website', 'roles'],
@@ -73,9 +74,49 @@ export default BaseValidator.create({
             let roles = model.get('roles');
 
             if (roles.length < 1) {
-                model.get('errors').add('role', '请选择角色');
+                model.get('errors').add('role', '请选择权限');
                 this.invalidate();
             }
+        }
+    },
+
+    passwordChange(model) {
+        let newPassword = model.get('newPassword');
+        let ne2Password = model.get('ne2Password');
+
+        // validation only marks the requested property as validated so we
+        // have to add properties manually
+        model.get('hasValidated').addObject('newPassword');
+        model.get('hasValidated').addObject('ne2Password');
+
+        if (isBlank(newPassword) && isBlank(ne2Password)) {
+            model.get('errors').add('newPassword', '请输入新密码');
+            this.invalidate();
+        } else {
+            if (!validator.equals(newPassword, ne2Password)) {
+                model.get('errors').add('ne2Password', '新密码不匹配');
+                this.invalidate();
+            }
+
+            if (!validator.isLength(newPassword, 8)) {
+                model.get('errors').add('newPassword', '密码至少8个字符');
+                this.invalidate();
+            }
+        }
+    },
+
+    ownPasswordChange(model) {
+        let oldPassword = model.get('password');
+
+        this.passwordChange(model);
+
+        // validation only marks the requested property as validated so we
+        // have to add properties manually
+        model.get('hasValidated').addObject('password');
+
+        if (isBlank(oldPassword)) {
+            model.get('errors').add('password', '请输入旧密码');
+            this.invalidate();
         }
     }
 });

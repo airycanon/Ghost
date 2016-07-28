@@ -9,8 +9,8 @@ import {
 import { expect } from 'chai';
 import startApp from '../../helpers/start-app';
 import destroyApp from '../../helpers/destroy-app';
-import { invalidateSession, authenticateSession } from 'ghost/tests/helpers/ember-simple-auth';
-import { errorOverride, errorReset } from 'ghost/tests/helpers/adapter-error';
+import { invalidateSession, authenticateSession } from 'ghost-admin/tests/helpers/ember-simple-auth';
+import { errorOverride, errorReset } from 'ghost-admin/tests/helpers/adapter-error';
 import Mirage from 'ember-cli-mirage';
 
 describe('Acceptance: Posts - Post', function() {
@@ -37,19 +37,36 @@ describe('Acceptance: Posts - Post', function() {
         });
 
         it('can visit post route', function () {
-            let posts = server.createList('post', 3);
+            let posts = server.createList('post', 6);
 
             visit('/');
 
             andThen(() => {
-                expect(find('.posts-list li').length, 'post list count').to.equal(3);
+                expect(find('.posts-list li').length, 'post list count').to.equal(6);
 
                 // if we're in "desktop" size, we should redirect and highlight
                 if (find('.content-preview:visible').length) {
                     expect(currentURL(), 'currentURL').to.equal(`/${posts[0].id}`);
-                    expect(find('.posts-list li').first().hasClass('active'), 'highlights latest post').to.be.true;
+                    // expect(find('.posts-list li').first().hasClass('active'), 'highlights latest post').to.be.true;
+                    expect(find('.posts-list li:nth-child(1) .status span').first().hasClass('scheduled'), 'first post in list is a scheduled one')
+                        .to.be.true;
+                    expect(find('.posts-list li:nth-child(3) .status span').first().hasClass('draft'), 'third post in list is a draft')
+                        .to.be.true;
+                    expect(find('.posts-list li:nth-child(5) .status time').first().hasClass('published'), 'fifth post in list is a published one')
+                        .to.be.true;
                 }
             });
+
+            // check if we can edit the post
+            click('.post-edit');
+
+            andThen(() => {
+                expect(currentURL(), 'currentURL to editor')
+                    .to.equal('/editor/1');
+            });
+
+            // TODO: test the right order of the listes posts
+            //  and fix the faker import to ensure correct ordering
         });
 
         it('redirects to 404 when post does not exist', function () {

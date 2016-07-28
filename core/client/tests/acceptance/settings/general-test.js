@@ -6,12 +6,11 @@ import {
     afterEach
 } from 'mocha';
 import { expect } from 'chai';
-import Ember from 'ember';
+import $ from 'jquery';
+import run from 'ember-runloop';
 import startApp from '../../helpers/start-app';
 import destroyApp from '../../helpers/destroy-app';
-import { invalidateSession, authenticateSession } from 'ghost/tests/helpers/ember-simple-auth';
-
-const {run} = Ember;
+import { invalidateSession, authenticateSession } from 'ghost-admin/tests/helpers/ember-simple-auth';
 
 describe('Acceptance: Settings - General', function () {
     let application;
@@ -132,6 +131,29 @@ describe('Acceptance: Settings - General', function () {
                 expect(find('#activeTheme select option').length, 'available themes').to.equal(1);
                 expect(find('#activeTheme select option').text().trim()).to.equal('Blog - 1.0');
             });
+        });
+
+        it('renders timezone selector correctly', function () {
+            visit('/settings/general');
+
+            andThen(() => {
+                expect(currentURL(), 'currentURL').to.equal('/settings/general');
+
+                expect(find('#activeTimezone select option').length, 'available timezones').to.equal(66);
+                expect(find('#activeTimezone option:selected').text().trim()).to.equal('(GMT) UTC');
+                find('#activeTimezone option[value="Africa/Cairo"]').prop('selected', true);
+            });
+
+            triggerEvent('#activeTimezone select', 'change');
+            click('.view-header .btn.btn-blue');
+
+            andThen(() => {
+                expect(find('#activeTimezone option:selected').text().trim()).to.equal('(GMT +2:00) Cairo, Egypt');
+            });
+        });
+
+        it('handles private blog settings correctly', function () {
+            visit('/settings/general');
 
             // handles private blog settings correctly
             andThen(() => {

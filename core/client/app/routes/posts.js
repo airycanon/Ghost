@@ -1,7 +1,7 @@
-import Ember from 'ember';
-import AuthenticatedRoute from 'ghost/routes/authenticated';
-import ShortcutsRoute from 'ghost/mixins/shortcuts-route';
-import PaginationMixin from 'ghost/mixins/pagination';
+import $ from 'jquery';
+import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
+import ShortcutsRoute from 'ghost-admin/mixins/shortcuts-route';
+import PaginationMixin from 'ghost-admin/mixins/pagination';
 
 export default AuthenticatedRoute.extend(ShortcutsRoute, PaginationMixin, {
     titleToken: 'Content',
@@ -54,7 +54,7 @@ export default AuthenticatedRoute.extend(ShortcutsRoute, PaginationMixin, {
     },
 
     scrollContent(amount) {
-        let content = Ember.$('.js-content-preview');
+        let content = $('.js-content-preview');
         let scrolled = content.scrollTop();
 
         content.scrollTop(scrolled + 50 * amount);

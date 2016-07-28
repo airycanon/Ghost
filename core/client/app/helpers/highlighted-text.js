@@ -1,7 +1,8 @@
-import Ember from 'ember';
+import {helper} from 'ember-helper';
+import {htmlSafe} from 'ember-string';
 
 export function highlightedText([text, termToHighlight]) {
-    return Ember.String.htmlSafe(text.replace(new RegExp(termToHighlight, 'ig'), '<span class="highlight">$&</span>'));
+    return htmlSafe(text.replace(new RegExp(termToHighlight, 'ig'), '<span class="highlight">$&</span>'));
 }
 
-export default Ember.Helper.helper(highlightedText);
+export default helper(highlightedText);

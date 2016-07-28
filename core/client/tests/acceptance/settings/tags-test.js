@@ -7,14 +7,13 @@ import {
     afterEach
 } from 'mocha';
 import { expect } from 'chai';
-import Ember from 'ember';
+import $ from 'jquery';
+import run from 'ember-runloop';
 import startApp from '../../helpers/start-app';
 import destroyApp from '../../helpers/destroy-app';
-import { invalidateSession, authenticateSession } from 'ghost/tests/helpers/ember-simple-auth';
-import { errorOverride, errorReset } from 'ghost/tests/helpers/adapter-error';
+import { invalidateSession, authenticateSession } from 'ghost-admin/tests/helpers/ember-simple-auth';
+import { errorOverride, errorReset } from 'ghost-admin/tests/helpers/adapter-error';
 import Mirage from 'ember-cli-mirage';
-
-const {run} = Ember;
 
 // Grabbed from keymaster's testing code because Ember's `keyEvent` helper
 // is for some reason not triggering the events in a way that keymaster detects:
@@ -111,7 +110,7 @@ describe('Acceptance: Settings - Tags', function () {
                     .to.equal(tag1.name);
 
                 // it highlights selected tag
-                expect(find(`a[href="/settings/tags/${tag1.slug}"]`).hasClass('active'), 'highlights selected tag')
+                expect(find(`a[href="/ghost/settings/tags/${tag1.slug}"]`).hasClass('active'), 'highlights selected tag')
                     .to.be.true;
 
                 // it shows selected tag form
@@ -129,7 +128,7 @@ describe('Acceptance: Settings - Tags', function () {
                 expect(currentURL(), 'url after clicking tag').to.equal(`/settings/tags/${tag2.slug}`);
 
                 // it highlights selected tag
-                expect(find(`a[href="/settings/tags/${tag2.slug}"]`).hasClass('active'), 'highlights selected tag')
+                expect(find(`a[href="/ghost/settings/tags/${tag2.slug}"]`).hasClass('active'), 'highlights selected tag')
                     .to.be.true;
 
                 // it shows selected tag form
@@ -150,7 +149,7 @@ describe('Acceptance: Settings - Tags', function () {
                 expect(currentURL(), 'url after keyboard up arrow').to.equal(`/settings/tags/${tag1.slug}`);
 
                 // it highlights selected tag
-                expect(find(`a[href="/settings/tags/${tag1.slug}"]`).hasClass('active'), 'selects previous tag')
+                expect(find(`a[href="/ghost/settings/tags/${tag1.slug}"]`).hasClass('active'), 'selects previous tag')
                     .to.be.true;
             });
 
@@ -167,14 +166,13 @@ describe('Acceptance: Settings - Tags', function () {
                 expect(currentURL(), 'url after keyboard down arrow').to.equal(`/settings/tags/${tag2.slug}`);
 
                 // it highlights selected tag
-                expect(find(`a[href="/settings/tags/${tag2.slug}"]`).hasClass('active'), 'selects next tag')
+                expect(find(`a[href="/ghost/settings/tags/${tag2.slug}"]`).hasClass('active'), 'selects next tag')
                     .to.be.true;
             });
 
             // trigger save
             fillIn('.tag-settings-pane input[name="name"]', 'New Name');
             triggerEvent('.tag-settings-pane input[name="name"]', 'blur');
-
             andThen(() => {
                 // check we update with the data returned from the server
                 expect(find('.settings-tags .settings-tag:last .tag-title').text(), 'tag list updates on save')
@@ -214,7 +212,7 @@ describe('Acceptance: Settings - Tags', function () {
                     .to.equal(3);
                 expect(find('.settings-tags .settings-tag:last .tag-title').text(), 'new tag list item title')
                     .to.equal('New Tag');
-                expect(find('a[href="/settings/tags/new-tag"]').hasClass('active'), 'highlights new tag')
+                expect(find('a[href="/ghost/settings/tags/new-tag"]').hasClass('active'), 'highlights new tag')
                     .to.be.true;
             });
 
@@ -245,7 +243,7 @@ describe('Acceptance: Settings - Tags', function () {
                     .to.equal(2);
 
                 // selects tag in list
-                expect(find('a[href="/settings/tags/tag-1"]').hasClass('active'), 'highlights requested tag')
+                expect(find('a[href="/ghost/settings/tags/tag-1"]').hasClass('active'), 'highlights requested tag')
                     .to.be.true;
 
                 // shows requested tag in settings pane
@@ -283,6 +281,25 @@ describe('Acceptance: Settings - Tags', function () {
                 // it loads the final page
                 expect(find('.settings-tags .settings-tag').length, 'tag list count on third load')
                     .to.equal(32);
+            });
+        });
+
+        it('shows the internal tag label', function () {
+            server.create('tag', {name: '#internal-tag', slug: 'hash-internal-tag', visibility: 'internal'});
+
+            visit('settings/tags/');
+
+            andThen(() => {
+                expect(currentURL()).to.equal('/settings/tags/hash-internal-tag');
+
+                expect(find('.settings-tags .settings-tag').length, 'tag list count')
+                    .to.equal(1);
+
+                expect(find('.settings-tags .settings-tag:first .label.label-blue').length, 'internal tag label')
+                    .to.equal(1);
+
+                expect(find('.settings-tags .settings-tag:first .label.label-blue').text().trim(), 'internal tag label text')
+                    .to.equal('internal');
             });
         });
 

@@ -1,26 +1,25 @@
-import Ember from 'ember';
+import Mixin from 'ember-metal/mixin';
+import RSVP from 'rsvp';
+import {A as emberA, isEmberArray} from 'ember-array/utils';
 import DS from 'ember-data';
 import Model from 'ember-data/model';
-import getRequestErrorMessage from 'ghost/utils/ajax';
 
-import InviteUserValidator from 'ghost/validators/invite-user';
-import NavItemValidator from 'ghost/validators/nav-item';
-import PostValidator from 'ghost/validators/post';
-import ResetValidator from 'ghost/validators/reset';
-import SettingValidator from 'ghost/validators/setting';
-import SetupValidator from 'ghost/validators/setup';
-import SigninValidator from 'ghost/validators/signin';
-import SignupValidator from 'ghost/validators/signup';
-import SlackIntegrationValidator from 'ghost/validators/slack-integration';
-import SubscriberValidator from 'ghost/validators/subscriber';
-import TagSettingsValidator from 'ghost/validators/tag-settings';
-import UserValidator from 'ghost/validators/user';
+import InviteUserValidator from 'ghost-admin/validators/invite-user';
+import NavItemValidator from 'ghost-admin/validators/nav-item';
+import PostValidator from 'ghost-admin/validators/post';
+import ResetValidator from 'ghost-admin/validators/reset';
+import SettingValidator from 'ghost-admin/validators/setting';
+import SetupValidator from 'ghost-admin/validators/setup';
+import SigninValidator from 'ghost-admin/validators/signin';
+import SignupValidator from 'ghost-admin/validators/signup';
+import SlackIntegrationValidator from 'ghost-admin/validators/slack-integration';
+import SubscriberValidator from 'ghost-admin/validators/subscriber';
+import TagSettingsValidator from 'ghost-admin/validators/tag-settings';
+import UserValidator from 'ghost-admin/validators/user';
 
-import ValidatorExtensions from 'ghost/utils/validator-extensions';
+import ValidatorExtensions from 'ghost-admin/utils/validator-extensions';
 
-const {Mixin, RSVP, isArray} = Ember;
 const {Errors} = DS;
-const emberA = Ember.A;
 
 // our extensions to the validator library
 ValidatorExtensions.init();
@@ -145,9 +144,8 @@ export default Mixin.create({
             return _super.call(this, options);
         }).catch((result) => {
             // server save failed or validator type doesn't exist
-            if (result && !isArray(result)) {
-                // return the array of errors from the server
-                result = getRequestErrorMessage(result);
+            if (result && !isEmberArray(result)) {
+                throw result;
             }
 
             return RSVP.reject(result);

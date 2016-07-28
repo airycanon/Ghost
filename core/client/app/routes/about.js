@@ -1,18 +1,14 @@
-import Ember from 'ember';
-import AuthenticatedRoute from 'ghost/routes/authenticated';
-import styleBody from 'ghost/mixins/style-body';
-
-const {
-    inject: {service}
-} = Ember;
+import injectService from 'ember-service/inject';
+import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
+import styleBody from 'ghost-admin/mixins/style-body';
 
 export default AuthenticatedRoute.extend(styleBody, {
-    titleToken: '关于',
+    titleToken: 'About',
 
     classNames: ['view-about'],
 
-    ghostPaths: service(),
-    ajax: service(),
+    ghostPaths: injectService(),
+    ajax: injectService(),
 
     cachedConfig: false,
 

@@ -1,20 +1,18 @@
-import Ember from 'ember';
-import styleBody from 'ghost/mixins/style-body';
+import Route from 'ember-route';
+import injectService from 'ember-service/inject';
+import EmberObject from 'ember-object';
+import styleBody from 'ghost-admin/mixins/style-body';
 import Configuration from 'ember-simple-auth/configuration';
 import DS from 'ember-data';
 
-const {
-    Route,
-    inject: {service}
-} = Ember;
 const {Errors} = DS;
 
 export default Route.extend(styleBody, {
-    titleToken: '登录',
+    titleToken: 'Sign In',
 
     classNames: ['ghost-login'],
 
-    session: service(),
+    session: injectService(),
 
     beforeModel() {
         this._super(...arguments);
@@ -25,7 +23,7 @@ export default Route.extend(styleBody, {
     },
 
     model() {
-        return Ember.Object.create({
+        return EmberObject.create({
             identification: '',
             password: '',
             errors: Errors.create()

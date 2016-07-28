@@ -1,11 +1,10 @@
 // logic borrowed from https://github.com/alexspeller/ember-cli-active-link-wrapper/blob/master/addon/components/active-link.js
+import Mixin from 'ember-metal/mixin';
+import run from 'ember-runloop';
+import computed from 'ember-computed';
+import {A as emberA} from 'ember-array/utils';
 
-import Ember from 'ember';
-
-const {computed, run} = Ember;
-const emberA = Ember.A;
-
-export default Ember.Mixin.create({
+export default Mixin.create({
 
     classNameBindings: ['active'],
 

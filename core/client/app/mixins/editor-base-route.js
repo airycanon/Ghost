@@ -1,9 +1,11 @@
-import Ember from 'ember';
-import ShortcutsRoute from 'ghost/mixins/shortcuts-route';
-import styleBody from 'ghost/mixins/style-body';
-import ctrlOrCmd from 'ghost/utils/ctrl-or-cmd';
+import $ from 'jquery';
+import Mixin from 'ember-metal/mixin';
+import RSVP from 'rsvp';
+import run from 'ember-runloop';
 
-const {$, Mixin, RSVP, run} = Ember;
+import ShortcutsRoute from 'ghost-admin/mixins/shortcuts-route';
+import styleBody from 'ghost-admin/mixins/style-body';
+import ctrlOrCmd from 'ghost-admin/utils/ctrl-or-cmd';
 
 let generalShortcuts = {};
 generalShortcuts[`${ctrlOrCmd}+alt+p`] = 'publish';
@@ -35,7 +37,7 @@ export default Mixin.create(styleBody, ShortcutsRoute, {
         },
 
         toggleZenMode() {
-            Ember.$('body').toggleClass('zen');
+            $('body').toggleClass('zen');
         },
 
         willTransition(transition) {
@@ -46,6 +48,10 @@ export default Mixin.create(styleBody, ShortcutsRoute, {
             let state = model.getProperties('isDeleted', 'isSaving', 'hasDirtyAttributes', 'isNew');
             let deletedWithoutChanges,
                 fromNewToEdit;
+
+            if (this.get('upgradeStatus.isRequired')) {
+                return this._super(...arguments);
+            }
 
             // if a save is in-flight we don't know whether or not it's safe to leave
             // so we abort the transition and retry after the save has completed.

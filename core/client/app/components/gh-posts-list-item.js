@@ -1,14 +1,17 @@
+import $ from 'jquery';
 import Ember from 'ember';
-import ActiveLinkWrapper from 'ghost/mixins/active-link-wrapper';
+import Component from 'ember-component';
+import {htmlSafe} from 'ember-string';
+import computed, {alias, equal} from 'ember-computed';
+import injectService from 'ember-service/inject';
+
+import ActiveLinkWrapper from 'ghost-admin/mixins/active-link-wrapper';
 import {invokeAction} from 'ember-invoke-action';
 
-const {
-    $,
-    Component,
-    computed,
-    inject: {service}
-} = Ember;
-const {alias, equal} = computed;
+// ember-cli-shims doesn't export these
+const {ObjectProxy, PromiseProxyMixin} = Ember;
+
+const ObjectPromiseProxy = ObjectProxy.extend(PromiseProxyMixin);
 
 export default Component.extend(ActiveLinkWrapper, {
     tagName: 'li',
@@ -20,8 +23,10 @@ export default Component.extend(ActiveLinkWrapper, {
     isFeatured: alias('post.featured'),
     isPage: alias('post.page'),
     isPublished: equal('post.status', 'published'),
+    isScheduled: equal('post.status', 'scheduled'),
 
-    ghostPaths: service(),
+    ghostPaths: injectService(),
+    timeZone: injectService(),
 
     authorName: computed('post.author.name', 'post.author.email', function () {
         return this.get('post.author.name') || this.get('post.author.email');
@@ -32,7 +37,13 @@ export default Component.extend(ActiveLinkWrapper, {
     }),
 
     authorAvatarBackground: computed('authorAvatar', function () {
-        return Ember.String.htmlSafe(`background-image: url(${this.get('authorAvatar')})`);
+        return htmlSafe(`background-image: url(${this.get('authorAvatar')})`);
+    }),
+
+    blogTimezone: computed('timeZone.blogTimezone', function () {
+        return ObjectPromiseProxy.create({
+            promise: this.get('timeZone.blogTimezone')
+        });
     }),
 
     click() {

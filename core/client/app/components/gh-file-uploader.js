@@ -1,17 +1,16 @@
-import Ember from 'ember';
+import Component from 'ember-component';
+import {htmlSafe} from 'ember-string';
+import injectService from 'ember-service/inject';
+import computed from 'ember-computed';
+import {isBlank} from 'ember-utils';
+import run from 'ember-runloop';
+
 import { invoke, invokeAction } from 'ember-invoke-action';
 import {
-    RequestEntityTooLargeError,
-    UnsupportedMediaTypeError
-} from 'ghost/services/ajax';
-
-const {
-    Component,
-    computed,
-    inject: {service},
-    isBlank,
-    run
-} = Ember;
+    isVersionMismatchError,
+    isRequestEntityTooLargeError,
+    isUnsupportedMediaTypeError
+} from 'ghost-admin/services/ajax';
 
 export default Component.extend({
     tagName: 'section',
@@ -29,7 +28,8 @@ export default Component.extend({
     failureMessage: null,
     uploadPercentage: 0,
 
-    ajax: service(),
+    ajax: injectService(),
+    notifications: injectService(),
 
     formData: computed('file', function () {
         let paramName = this.get('paramName');
@@ -51,7 +51,7 @@ export default Component.extend({
             width = '0';
         }
 
-        return Ember.String.htmlSafe(`width: ${width}`);
+        return htmlSafe(`width: ${width}`);
     }),
 
     dragOver(event) {
@@ -130,9 +130,13 @@ export default Component.extend({
     _uploadFailed(error) {
         let message;
 
-        if (error instanceof UnsupportedMediaTypeError) {
+        if (isVersionMismatchError(error)) {
+            this.get('notifications').showAPIError(error);
+        }
+
+        if (isUnsupportedMediaTypeError(error)) {
             message = 'The file type you uploaded is not supported.';
-        } else if (error instanceof RequestEntityTooLargeError) {
+        } else if (isRequestEntityTooLargeError(error)) {
             message = 'The file you uploaded was larger than the maximum file size your server allows.';
         } else if (error.errors && !isBlank(error.errors[0].message)) {
             message = error.errors[0].message;

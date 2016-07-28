@@ -2,15 +2,17 @@
     <div class="gh-image-uploader --with-image">
         <div><img src={{image}}></div>
         <a class="image-cancel icon-trash" title="Delete" {{action remove}}>
-            <span class="hidden">Delete</span>
+            <span class="hidden">删除</span>
         </a>
     </div>
 {{else}}
     {{gh-image-uploader
         text=text
+        altText=altText
         update=(action 'update')
         onInput=(action 'onInput')
         uploadStarted=(action 'uploadStarted')
         uploadFinished=(action 'uploadFinished')
-        formChanged=(action 'formChanged')}}
+        formChanged=(action 'formChanged')
+    }}
 {{/if}}

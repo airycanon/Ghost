@@ -1,7 +1,6 @@
-import Ember from 'ember';
-import ValidationStateMixin from 'ghost/mixins/validation-state';
-
-const {Component, computed} = Ember;
+import Component from 'ember-component';
+import computed from 'ember-computed';
+import ValidationStateMixin from 'ghost-admin/mixins/validation-state';
 
 /**
  * Handles the CSS necessary to show a specific property state. When passed a

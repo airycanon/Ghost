@@ -1,7 +1,5 @@
-import Ember from 'ember';
-import ShortcutsMixin from 'ghost/mixins/shortcuts';
-
-const {Mixin} = Ember;
+import Mixin from 'ember-metal/mixin';
+import ShortcutsMixin from 'ghost-admin/mixins/shortcuts';
 
 /**
  * Only routes can implement shortcuts.

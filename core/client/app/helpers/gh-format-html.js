@@ -1,10 +1,9 @@
 /* global html_sanitize*/
-import Ember from 'ember';
-import cajaSanitizers from 'ghost/utils/caja-sanitizers';
+import {helper} from 'ember-helper';
+import {htmlSafe} from 'ember-string';
+import cajaSanitizers from 'ghost-admin/utils/caja-sanitizers';
 
-const {Helper} = Ember;
-
-export default Helper.helper(function (params) {
+export default helper(function (params) {
     if (!params || !params.length) {
         return;
     }
@@ -22,5 +21,5 @@ export default Helper.helper(function (params) {
     escapedhtml = html_sanitize(escapedhtml, cajaSanitizers.url, cajaSanitizers.id);
     // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
 
-    return Ember.String.htmlSafe(escapedhtml);
+    return htmlSafe(escapedhtml);
 });

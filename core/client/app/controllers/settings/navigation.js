@@ -1,17 +1,13 @@
-import Ember from 'ember';
-import SettingsSaveMixin from 'ghost/mixins/settings-save';
-import NavigationItem from 'ghost/models/navigation-item';
-
-const {
-    Controller,
-    RSVP,
-    computed,
-    inject: {service}
-} = Ember;
+import RSVP from 'rsvp';
+import Controller from 'ember-controller';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import SettingsSaveMixin from 'ghost-admin/mixins/settings-save';
+import NavigationItem from 'ghost-admin/models/navigation-item';
 
 export default Controller.extend(SettingsSaveMixin, {
-    config: service(),
-    notifications: service(),
+    config: injectService(),
+    notifications: injectService(),
 
     newNavItem: null,
 
@@ -42,7 +38,7 @@ export default Controller.extend(SettingsSaveMixin, {
 
         return RSVP.all(validationPromises).then(() => {
             return this.get('model').save().catch((err) => {
-                notifications.showErrors(err);
+                notifications.showAPIError(err);
             });
         }).catch(() => {
             // TODO: noop - needed to satisfy spinner button

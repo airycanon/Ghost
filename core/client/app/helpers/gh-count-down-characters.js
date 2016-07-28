@@ -1,8 +1,7 @@
-import Ember from 'ember';
+import {helper} from 'ember-helper';
+import {htmlSafe} from 'ember-string';
 
-const {Helper} = Ember;
-
-export default Helper.helper(function (params) {
+export default helper(function (params) {
     if (!params || params.length < 2) {
         return;
     }
@@ -24,5 +23,5 @@ export default Helper.helper(function (params) {
 
     el.innerHTML = length;
 
-    return Ember.String.htmlSafe(el.outerHTML);
+    return htmlSafe(el.outerHTML);
 });

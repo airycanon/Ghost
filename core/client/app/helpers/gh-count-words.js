@@ -1,9 +1,7 @@
-import Ember from 'ember';
-import counter from 'ghost/utils/word-count';
+import {helper} from 'ember-helper';
+import counter from 'ghost-admin/utils/word-count';
 
-const {Helper} = Ember;
-
-export default Helper.helper(function (params) {
+export default helper(function (params) {
     if (!params || !params.length) {
         return;
     }
@@ -11,10 +9,10 @@ export default Helper.helper(function (params) {
     let markdown = params[0] || '';
 
     if (/^\s*$/.test(markdown)) {
-        return '0 个字';
+        return '0 words';
     }
 
     let count = counter(markdown);
 
-    return count + (count === 1 ? ' 个字' : ' 个字');
+    return count + (count === 1 ? ' word' : ' words');
 });

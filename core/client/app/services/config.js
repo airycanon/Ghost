@@ -1,10 +1,12 @@
+import $ from 'jquery';
 import Ember from 'ember';
+import Service from 'ember-service';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
 
-const {Service, _ProxyMixin, computed} = Ember;
-
-function isNumeric(num) {
-    return Ember.$.isNumeric(num);
-}
+// ember-cli-shims doesn't export _ProxyMixin
+const {_ProxyMixin} = Ember;
+const {isNumeric} = $;
 
 function _mapType(val, type) {
     if (val === '') {
@@ -25,8 +27,11 @@ function _mapType(val, type) {
 }
 
 export default Service.extend(_ProxyMixin, {
+    ajax: injectService(),
+    ghostPaths: injectService(),
+
     content: computed(function () {
-        let metaConfigTags = Ember.$('meta[name^="env-"]');
+        let metaConfigTags = $('meta[name^="env-"]');
         let config = {};
 
         metaConfigTags.each((i, el) => {
@@ -40,5 +45,17 @@ export default Service.extend(_ProxyMixin, {
         });
 
         return config;
+    }),
+
+    availableTimezones: computed(function() {
+        let timezonesUrl = this.get('ghostPaths.url').api('configuration', 'timezones');
+
+        return this.get('ajax').request(timezonesUrl).then((configTimezones) => {
+            let [ timezonesObj ] = configTimezones.configuration;
+
+            timezonesObj = timezonesObj.timezones;
+
+            return timezonesObj;
+        });
     })
 });

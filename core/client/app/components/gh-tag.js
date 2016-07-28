@@ -1,7 +1,10 @@
-import Ember from 'ember';
+import Component from 'ember-component';
+import injectService from 'ember-service/inject';
 import {invokeAction} from 'ember-invoke-action';
 
-export default Ember.Component.extend({
+export default Component.extend({
+    feature: injectService(),
+
     willDestroyElement() {
         this._super(...arguments);
 

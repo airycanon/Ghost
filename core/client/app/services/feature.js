@@ -1,13 +1,11 @@
 import Ember from 'ember';
+import Service from 'ember-service';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import set from 'ember-metal/set';
 
-const {
-    Service,
-    computed,
-    inject: {service},
-    set
-} = Ember;
-
-const EmberError = Ember.Error;
+// ember-cli-shims doesn't export Error
+const {Error: EmberError} = Ember;
 
 export function feature(name) {
     return computed(`config.${name}`, `labs.${name}`, {
@@ -26,12 +24,13 @@ export function feature(name) {
 }
 
 export default Service.extend({
-    store: service(),
-    config: service(),
-    notifications: service(),
+    store: injectService(),
+    config: injectService(),
+    notifications: injectService(),
 
     publicAPI: feature('publicAPI'),
     subscribers: feature('subscribers'),
+    internalTags: feature('internalTags'),
 
     _settings: null,
 
@@ -66,17 +65,17 @@ export default Service.extend({
             this.notifyPropertyChange('labs');
             return this.get(`labs.${key}`);
 
-        }).catch((errors) => {
+        }).catch((error) => {
             settings.rollbackAttributes();
             this.notifyPropertyChange('labs');
 
             // we'll always have an errors object unless we hit a
             // validation error
-            if (!errors) {
+            if (!error) {
                 throw new EmberError(`Validation of the feature service settings model failed when updating labs.`);
             }
 
-            this.get('notifications').showErrors(errors);
+            this.get('notifications').showAPIError(error);
 
             return this.get(`labs.${key}`);
         });

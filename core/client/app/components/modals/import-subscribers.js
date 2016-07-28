@@ -1,9 +1,7 @@
-import Ember from 'ember';
-import { invokeAction } from 'ember-invoke-action';
-import ModalComponent from 'ghost/components/modals/base';
-import ghostPaths from 'ghost/utils/ghost-paths';
-
-const {computed} = Ember;
+import computed from 'ember-computed';
+import {invokeAction} from 'ember-invoke-action';
+import ModalComponent from 'ghost-admin/components/modals/base';
+import ghostPaths from 'ghost-admin/utils/ghost-paths';
 
 export default ModalComponent.extend({
     labelText: 'Select or drag-and-drop a CSV File',

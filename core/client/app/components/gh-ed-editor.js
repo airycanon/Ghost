@@ -1,12 +1,11 @@
-import Ember from 'ember';
-import EditorAPI from 'ghost/mixins/ed-editor-api';
-import EditorShortcuts from 'ghost/mixins/ed-editor-shortcuts';
-import EditorScroll from 'ghost/mixins/ed-editor-scroll';
-import {invokeAction} from 'ember-invoke-action';
+import TextArea from 'ember-components/text-area';
+import run from 'ember-runloop';
+import EditorAPI from 'ghost-admin/mixins/ed-editor-api';
+import EditorShortcuts from 'ghost-admin/mixins/ed-editor-shortcuts';
+import EditorScroll from 'ghost-admin/mixins/ed-editor-scroll';
+import {InvokeActionMixin} from 'ember-invoke-action';
 
-const {TextArea, run} = Ember;
-
-export default TextArea.extend(EditorAPI, EditorShortcuts, EditorScroll, {
+export default TextArea.extend(EditorAPI, EditorShortcuts, EditorScroll, InvokeActionMixin, {
     focus: false,
 
     /**
@@ -33,7 +32,7 @@ export default TextArea.extend(EditorAPI, EditorShortcuts, EditorScroll, {
 
         this.setFocus();
 
-        invokeAction(this, 'setEditor', this);
+        this.invokeAction('setEditor', this);
 
         run.scheduleOnce('afterRender', this, this.afterRenderEvent);
     },
@@ -46,7 +45,7 @@ export default TextArea.extend(EditorAPI, EditorShortcuts, EditorScroll, {
 
     actions: {
         toggleCopyHTMLModal(generatedHTML) {
-            invokeAction(this, 'toggleCopyHTMLModal', generatedHTML);
+            this.invokeAction('toggleCopyHTMLModal', generatedHTML);
         }
     }
 });

@@ -1,12 +1,10 @@
-import Ember from 'ember';
-import ModalComponent from 'ghost/components/modals/base';
-import ValidationEngine from 'ghost/mixins/validation-engine';
-
-const {
-    $,
-    computed,
-    inject: {service}
-} = Ember;
+import $ from 'jquery';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import {htmlSafe} from 'ember-string';
+import ModalComponent from 'ghost-admin/components/modals/base';
+import ValidationEngine from 'ghost-admin/mixins/validation-engine';
+import {isVersionMismatchError} from 'ghost-admin/services/ajax';
 
 export default ModalComponent.extend(ValidationEngine, {
     validationType: 'signin',
@@ -14,8 +12,8 @@ export default ModalComponent.extend(ValidationEngine, {
     submitting: false,
     authenticationError: null,
 
-    notifications: service(),
-    session: service(),
+    notifications: injectService(),
+    session: injectService(),
 
     identification: computed('session.user.email', function () {
         return this.get('session.user.email');
@@ -52,7 +50,10 @@ export default ModalComponent.extend(ValidationEngine, {
                 }).catch((error) => {
                     if (error && error.errors) {
                         error.errors.forEach((err) => {
-                            err.message = Ember.String.htmlSafe(err.message);
+                            if (isVersionMismatchError(err)) {
+                                return this.get('notifications').showAPIError(error);
+                            }
+                            err.message = htmlSafe(err.message);
                         });
 
                         this.get('errors').add('password', 'Incorrect password');

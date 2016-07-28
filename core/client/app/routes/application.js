@@ -1,15 +1,14 @@
-import Ember from 'ember';
+import Route from 'ember-route';
+import {htmlSafe} from 'ember-string';
+import injectService from 'ember-service/inject';
+import run from 'ember-runloop';
+import {isEmberArray} from 'ember-array/utils';
+
 import AuthConfiguration from 'ember-simple-auth/configuration';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
-import ShortcutsRoute from 'ghost/mixins/shortcuts-route';
-import ctrlOrCmd from 'ghost/utils/ctrl-or-cmd';
-import windowProxy from 'ghost/utils/window-proxy';
-
-const {
-    Route,
-    inject: {service},
-    run
-} = Ember;
+import ShortcutsRoute from 'ghost-admin/mixins/shortcuts-route';
+import ctrlOrCmd from 'ghost-admin/utils/ctrl-or-cmd';
+import windowProxy from 'ghost-admin/utils/window-proxy';
 
 function K() {
     return this;
@@ -23,10 +22,11 @@ shortcuts[`${ctrlOrCmd}+s`] = {action: 'save', scope: 'all'};
 export default Route.extend(ApplicationRouteMixin, ShortcutsRoute, {
     shortcuts,
 
-    config: service(),
-    feature: service(),
-    dropdown: service(),
-    notifications: service(),
+    config: injectService(),
+    feature: injectService(),
+    dropdown: injectService(),
+    notifications: injectService(),
+    upgradeNotification: injectService(),
 
     afterModel(model, transition) {
         this._super(...arguments);
@@ -34,6 +34,7 @@ export default Route.extend(ApplicationRouteMixin, ShortcutsRoute, {
         if (this.get('session.isAuthenticated')) {
             this.set('appLoadTransition', transition);
             transition.send('loadServerNotifications');
+            transition.send('checkForOutdatedDesktopApp');
 
             // return the feature loading promise so that we block until settings
             // are loaded in order for synchronous access everywhere
@@ -114,11 +115,35 @@ export default Route.extend(ApplicationRouteMixin, ShortcutsRoute, {
                     if (!user.get('isAuthor') && !user.get('isEditor')) {
                         this.store.findAll('notification', {reload: true}).then((serverNotifications) => {
                             serverNotifications.forEach((notification) => {
-                                this.get('notifications').handleNotification(notification, isDelayed);
+                                if (notification.get('type') === 'upgrade') {
+                                    this.get('upgradeNotification').set('content', notification.get('message'));
+                                } else {
+                                    this.get('notifications').handleNotification(notification, isDelayed);
+                                }
                             });
                         });
                     }
                 });
+            }
+        },
+
+        checkForOutdatedDesktopApp() {
+            // Check if the user is running an older version of Ghost Desktop
+            // that needs to be manually updated
+            // (yes, the desktop team is deeply ashamed of these lines 😢)
+            let ua = navigator && navigator.userAgent ? navigator.userAgent : null;
+
+            if (ua && ua.includes && ua.includes('ghost-desktop')) {
+                let updateCheck = /ghost-desktop\/0\.((5\.0)|((4|2)\.0)|((3\.)(0|1)))/;
+                let link = '<a href="https://dev.ghost.org/ghost-desktop-manual-update" target="_blank">click here</a>';
+                let msg = `Your version of Ghost Desktop needs to be manually updated. Please ${link} to get started.`;
+
+                if (updateCheck.test(ua)) {
+                    this.get('notifications').showAlert(htmlSafe(msg), {
+                        type: 'warn',
+                        key: 'desktop.manual.upgrade'
+                    });
+                }
             }
         },
 
@@ -127,6 +152,54 @@ export default Route.extend(ApplicationRouteMixin, ShortcutsRoute, {
         },
 
         // noop default for unhandled save (used from shortcuts)
-        save: K
+        save: K,
+
+        error(error, transition) {
+            if (error && isEmberArray(error.errors)) {
+                switch (error.errors[0].errorType) {
+
+                    case 'NotFoundError':
+                        if (transition) {
+                            transition.abort();
+                        }
+
+                        let routeInfo = transition.handlerInfos[transition.handlerInfos.length - 1];
+                        let router = this.get('router');
+                        let params = [];
+
+                        for (let key of Object.keys(routeInfo.params)) {
+                            params.push(routeInfo.params[key]);
+                        }
+
+                        return this.transitionTo('error404', router.generate(routeInfo.name, ...params).replace('/ghost/', '').replace(/^\//g, ''));
+
+                    case 'VersionMismatchError':
+                        if (transition) {
+                            transition.abort();
+                        }
+
+                        this.get('upgradeStatus').requireUpgrade();
+                        return false;
+
+                    case 'Maintenance':
+                        if (transition) {
+                            transition.abort();
+                        }
+
+                        this.get('upgradeStatus').maintenanceAlert();
+                        return false;
+
+                    default:
+                        this.get('notifications').showAPIError(error);
+                        // don't show the 500 page if we weren't navigating
+                        if (!transition) {
+                            return false;
+                        }
+                }
+            }
+
+            // fallback to 500 error page
+            return true;
+        }
     }
 });

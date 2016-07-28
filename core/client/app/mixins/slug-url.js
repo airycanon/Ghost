@@ -1,8 +1,7 @@
-import Ember from 'ember';
+import Mixin from 'ember-metal/mixin';
+import {isBlank} from 'ember-utils';
 
-const {isBlank} = Ember;
-
-export default Ember.Mixin.create({
+export default Mixin.create({
     buildURL(_modelName, _id, _snapshot, _requestType, query) {
         let url = this._super(...arguments);
 

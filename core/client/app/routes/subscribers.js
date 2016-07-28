@@ -1,15 +1,11 @@
-import Ember from 'ember';
-import AuthenticatedRoute from 'ghost/routes/authenticated';
-
-const {
-    RSVP,
-    inject: {service}
-} = Ember;
+import RSVP from 'rsvp';
+import injectService from 'ember-service/inject';
+import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
 
 export default AuthenticatedRoute.extend({
     titleToken: 'Subscribers',
 
-    feature: service(),
+    feature: injectService(),
 
     // redirect if subscribers is disabled or user isn't owner/admin
     beforeModel() {

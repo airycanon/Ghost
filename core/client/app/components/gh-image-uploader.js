@@ -1,14 +1,17 @@
-import Ember from 'ember';
-import ghostPaths from 'ghost/utils/ghost-paths';
-import {RequestEntityTooLargeError, UnsupportedMediaTypeError} from 'ghost/services/ajax';
+import Component from 'ember-component';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import {htmlSafe} from 'ember-string';
+import {isBlank} from 'ember-utils';
+import run from 'ember-runloop';
 
-const {
-    Component,
-    computed,
-    inject: {service},
-    isBlank,
-    run
-} = Ember;
+import {invokeAction} from 'ember-invoke-action';
+import ghostPaths from 'ghost-admin/utils/ghost-paths';
+import {
+    isRequestEntityTooLargeError,
+    isUnsupportedMediaTypeError,
+    isVersionMismatchError
+} from 'ghost-admin/services/ajax';
 
 export default Component.extend({
     tagName: 'section',
@@ -16,7 +19,8 @@ export default Component.extend({
     classNameBindings: ['dragClass'],
 
     image: null,
-    text: 'Upload an image',
+    text: '',
+    altText: '',
     saveButton: true,
 
     dragClass: null,
@@ -26,8 +30,9 @@ export default Component.extend({
     url: null,
     uploadPercentage: 0,
 
-    ajax: service(),
-    config: service(),
+    ajax: injectService(),
+    config: injectService(),
+    notifications: injectService(),
 
     // TODO: this wouldn't be necessary if the server could accept direct
     // file uploads
@@ -40,6 +45,12 @@ export default Component.extend({
         return formData;
     }),
 
+    description: computed('text', 'altText', function () {
+        let altText = this.get('altText');
+
+        return this.get('text') || (altText ? `Upload image of "${altText}"` : 'Upload an image');
+    }),
+
     progressStyle: computed('uploadPercentage', function () {
         let percentage = this.get('uploadPercentage');
         let width = '';
@@ -50,7 +61,7 @@ export default Component.extend({
             width = '0';
         }
 
-        return Ember.String.htmlSafe(`width: ${width}`);
+        return htmlSafe(`width: ${width}`);
     }),
 
     canShowUploadForm: computed('config.fileStorage', function () {
@@ -113,13 +124,11 @@ export default Component.extend({
         }
     },
 
-    uploadStarted() {
-        if (typeof this.attrs.uploadStarted === 'function') {
-            this.attrs.uploadStarted();
-        }
+    _uploadStarted() {
+        invokeAction(this, 'uploadStarted');
     },
 
-    uploadProgress(event) {
+    _uploadProgress(event) {
         if (event.lengthComputable) {
             run(() => {
                 let percentage = Math.round((event.loaded / event.total) * 100);
@@ -128,24 +137,27 @@ export default Component.extend({
         }
     },
 
-    uploadFinished() {
-        if (typeof this.attrs.uploadFinished === 'function') {
-            this.attrs.uploadFinished();
-        }
+    _uploadFinished() {
+        invokeAction(this, 'uploadFinished');
     },
 
-    uploadSuccess(response) {
+    _uploadSuccess(response) {
         this.set('url', response);
         this.send('saveUrl');
         this.send('reset');
+        invokeAction(this, 'uploadSuccess', response);
     },
 
-    uploadFailed(error) {
+    _uploadFailed(error) {
         let message;
 
-        if (error instanceof UnsupportedMediaTypeError) {
+        if (isVersionMismatchError(error)) {
+            this.get('notifications').showAPIError(error);
+        }
+
+        if (isUnsupportedMediaTypeError(error)) {
             message = 'The image type you uploaded is not supported. Please use .PNG, .JPG, .GIF, .SVG.';
-        } else if (error instanceof RequestEntityTooLargeError) {
+        } else if (isRequestEntityTooLargeError(error)) {
             message = 'The image you uploaded was larger than the maximum file size your server allows.';
         } else if (error.errors && !isBlank(error.errors[0].message)) {
             message = error.errors[0].message;
@@ -154,6 +166,7 @@ export default Component.extend({
         }
 
         this.set('failureMessage', message);
+        invokeAction(this, 'uploadFailed', error);
     },
 
     generateRequest() {
@@ -161,7 +174,7 @@ export default Component.extend({
         let formData = this.get('formData');
         let url = `${ghostPaths().apiRoot}/uploads/`;
 
-        this.uploadStarted();
+        this._uploadStarted();
 
         ajax.post(url, {
             data: formData,
@@ -172,18 +185,18 @@ export default Component.extend({
                 let xhr = new window.XMLHttpRequest();
 
                 xhr.upload.addEventListener('progress', (event) => {
-                    this.uploadProgress(event);
+                    this._uploadProgress(event);
                 }, false);
 
                 return xhr;
             }
         }).then((response) => {
             let url = JSON.parse(response);
-            this.uploadSuccess(url);
+            this._uploadSuccess(url);
         }).catch((error) => {
-            this.uploadFailed(error);
+            this._uploadFailed(error);
         }).finally(() => {
-            this.uploadFinished();
+            this._uploadFinished();
         });
     },
 
@@ -197,10 +210,7 @@ export default Component.extend({
 
         onInput(url) {
             this.set('url', url);
-
-            if (typeof this.attrs.onInput === 'function') {
-                this.attrs.onInput(url);
-            }
+            invokeAction(this, 'onInput', url);
         },
 
         reset() {
@@ -211,16 +221,14 @@ export default Component.extend({
         switchForm(formType) {
             this.set('formType', formType);
 
-            if (typeof this.attrs.formChanged === 'function') {
-                run.scheduleOnce('afterRender', this, function () {
-                    this.attrs.formChanged(formType);
-                });
-            }
+            run.scheduleOnce('afterRender', this, function () {
+                invokeAction(this, 'formChanged', formType);
+            });
         },
 
         saveUrl() {
             let url = this.get('url');
-            this.attrs.update(url);
+            invokeAction(this, 'update', url);
         }
     }
 });

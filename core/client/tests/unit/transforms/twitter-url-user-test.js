@@ -1,17 +1,12 @@
 /* jshint expr:true */
 import { expect } from 'chai';
 import { describeModule, it } from 'ember-mocha';
-import Ember from 'ember';
-
-const emberA = Ember.A;
+import {A as emberA} from 'ember-array/utils';
 
 describeModule(
     'transform:twitter-url-user',
     'Unit: Transform: twitter-url-user',
-    {
-        // Specify the other units that are required for this test.
-        // needs: ['transform:foo']
-    },
+    {},
     function() {
         it('deserializes twitter url', function () {
             let transform = this.subject();

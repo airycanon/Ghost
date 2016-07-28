@@ -6,13 +6,11 @@ import {
     afterEach
 } from 'mocha';
 import { expect } from 'chai';
-import Ember from 'ember';
+import run from 'ember-runloop';
 import startApp from '../../helpers/start-app';
 import destroyApp from '../../helpers/destroy-app';
 import Mirage from 'ember-cli-mirage';
-import { invalidateSession, authenticateSession } from 'ghost/tests/helpers/ember-simple-auth';
-
-const {run} = Ember;
+import { invalidateSession, authenticateSession } from 'ghost-admin/tests/helpers/ember-simple-auth';
 
 describe('Acceptance: Settings - Apps - Slack', function () {
     let application;
@@ -110,6 +108,7 @@ describe('Acceptance: Settings - Apps - Slack', function () {
             click('.gh-alert-blue .gh-alert-close');
             click('#sendTestNotification');
 
+            // we shouldn't try to send the test request if the save fails
             andThen(() => {
                 let [lastRequest] = server.pretender.handledRequests.slice(-1);
                 expect(lastRequest.url).to.not.match(/\/slack\/test/);

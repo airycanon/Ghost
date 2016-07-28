@@ -4,10 +4,10 @@ import {
     it
 } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import Ember from 'ember';
+import Service from 'ember-service';
 import wait from 'ember-test-helpers/wait';
 
-const featureStub = Ember.Service.extend({
+const featureStub = Service.extend({
     testFlag: true
 });
 

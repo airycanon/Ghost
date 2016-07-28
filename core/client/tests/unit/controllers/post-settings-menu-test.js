@@ -1,11 +1,12 @@
 /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
-import Ember from 'ember';
+import run from 'ember-runloop';
+import RSVP from 'rsvp';
+import EmberObject from 'ember-object';
 import {
     describeModule,
     it
 } from 'ember-mocha';
-
-const {run} = Ember;
+import sinon from 'sinon';
 
 function K() {
     return this;
@@ -15,13 +16,13 @@ describeModule(
     'controller:post-settings-menu',
     'Unit: Controller: post-settings-menu',
     {
-        needs: ['controller:application', 'service:notifications', 'service:slug-generator']
+        needs: ['controller:application', 'service:notifications', 'service:slug-generator', 'service:timeZone']
     },
 
     function () {
         it('slugValue is one-way bound to model.slug', function () {
             let controller = this.subject({
-                model: Ember.Object.create({
+                model: EmberObject.create({
                     slug: 'a-slug'
                 })
             });
@@ -52,7 +53,7 @@ describeModule(
 
         it('metaTitleScratch is one-way bound to model.metaTitle', function () {
             let controller = this.subject({
-                model: Ember.Object.create({
+                model: EmberObject.create({
                     metaTitle: 'a title'
                 })
             });
@@ -83,7 +84,7 @@ describeModule(
 
         it('metaDescriptionScratch is one-way bound to model.metaDescription', function () {
             let controller = this.subject({
-                model: Ember.Object.create({
+                model: EmberObject.create({
                     metaDescription: 'a description'
                 })
             });
@@ -115,7 +116,7 @@ describeModule(
         describe('seoTitle', function () {
             it('should be the metaTitle if one exists', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         metaTitle: 'a meta-title',
                         titleScratch: 'should not be used'
                     })
@@ -126,7 +127,7 @@ describeModule(
 
             it('should default to the title if an explicit meta-title does not exist', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         titleScratch: 'should be the meta-title'
                     })
                 });
@@ -136,7 +137,7 @@ describeModule(
 
             it('should be the metaTitle if both title and metaTitle exist', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         metaTitle: 'a meta-title',
                         titleScratch: 'a title'
                     })
@@ -147,7 +148,7 @@ describeModule(
 
             it('should revert to the title if explicit metaTitle is removed', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         metaTitle: 'a meta-title',
                         titleScratch: 'a title'
                     })
@@ -165,7 +166,7 @@ describeModule(
             it('should truncate to 70 characters with an appended ellipsis', function () {
                 let longTitle = new Array(100).join('a');
                 let controller = this.subject({
-                    model: Ember.Object.create()
+                    model: EmberObject.create()
                 });
 
                 expect(longTitle.length).to.equal(99);
@@ -184,7 +185,7 @@ describeModule(
         describe('seoDescription', function () {
             it('should be the metaDescription if one exists', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         metaDescription: 'a description'
                     })
                 });
@@ -200,7 +201,7 @@ describeModule(
             it('should truncate to 156 characters with an appended ellipsis', function () {
                 let longDescription = new Array(200).join('a');
                 let controller = this.subject({
-                    model: Ember.Object.create()
+                    model: EmberObject.create()
                 });
 
                 expect(longDescription.length).to.equal(199);
@@ -219,8 +220,8 @@ describeModule(
         describe('seoURL', function () {
             it('should be the URL of the blog if no post slug exists', function () {
                 let controller = this.subject({
-                    config: Ember.Object.create({blogUrl: 'http://my-ghost-blog.com'}),
-                    model: Ember.Object.create()
+                    config: EmberObject.create({blogUrl: 'http://my-ghost-blog.com'}),
+                    model: EmberObject.create()
                 });
 
                 expect(controller.get('seoURL')).to.equal('http://my-ghost-blog.com/');
@@ -228,8 +229,8 @@ describeModule(
 
             it('should be the URL of the blog plus the post slug', function () {
                 let controller = this.subject({
-                    config: Ember.Object.create({blogUrl: 'http://my-ghost-blog.com'}),
-                    model: Ember.Object.create({slug: 'post-slug'})
+                    config: EmberObject.create({blogUrl: 'http://my-ghost-blog.com'}),
+                    model: EmberObject.create({slug: 'post-slug'})
                 });
 
                 expect(controller.get('seoURL')).to.equal('http://my-ghost-blog.com/post-slug/');
@@ -237,8 +238,8 @@ describeModule(
 
             it('should update when the post slug changes', function () {
                 let controller = this.subject({
-                    config: Ember.Object.create({blogUrl: 'http://my-ghost-blog.com'}),
-                    model: Ember.Object.create({slug: 'post-slug'})
+                    config: EmberObject.create({blogUrl: 'http://my-ghost-blog.com'}),
+                    model: EmberObject.create({slug: 'post-slug'})
                 });
 
                 expect(controller.get('seoURL')).to.equal('http://my-ghost-blog.com/post-slug/');
@@ -254,8 +255,8 @@ describeModule(
                 let blogURL = 'http://my-ghost-blog.com';
                 let longSlug = new Array(75).join('a');
                 let controller = this.subject({
-                    config: Ember.Object.create({blogUrl: blogURL}),
-                    model: Ember.Object.create({slug: longSlug})
+                    config: EmberObject.create({blogUrl: blogURL}),
+                    model: EmberObject.create({slug: longSlug})
                 });
                 let expected;
 
@@ -272,7 +273,7 @@ describeModule(
         describe('togglePage', function () {
             it('should toggle the page property', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         page: false,
                         isNew: true
                     })
@@ -289,12 +290,12 @@ describeModule(
 
             it('should not save the post if it is still new', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         page: false,
                         isNew: true,
                         save() {
                             this.incrementProperty('saved');
-                            return Ember.RSVP.resolve();
+                            return RSVP.resolve();
                         }
                     })
                 });
@@ -309,12 +310,12 @@ describeModule(
 
             it('should save the post if it is not new', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         page: false,
                         isNew: false,
                         save() {
                             this.incrementProperty('saved');
-                            return Ember.RSVP.resolve();
+                            return RSVP.resolve();
                         }
                     })
                 });
@@ -331,7 +332,7 @@ describeModule(
         describe('toggleFeatured', function () {
             it('should toggle the featured property', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         featured: false,
                         isNew: true
                     })
@@ -346,12 +347,12 @@ describeModule(
 
             it('should not save the post if it is still new', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         featured: false,
                         isNew: true,
                         save() {
                             this.incrementProperty('saved');
-                            return Ember.RSVP.resolve();
+                            return RSVP.resolve();
                         }
                     })
                 });
@@ -366,12 +367,12 @@ describeModule(
 
             it('should save the post if it is not new', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         featured: false,
                         isNew: false,
                         save() {
                             this.incrementProperty('saved');
-                            return Ember.RSVP.resolve();
+                            return RSVP.resolve();
                         }
                     })
                 });
@@ -388,12 +389,12 @@ describeModule(
         describe('generateAndSetSlug', function () {
             it('should generate a slug and set it on the destination', function (done) {
                 let controller = this.subject({
-                    slugGenerator: Ember.Object.create({
+                    slugGenerator: EmberObject.create({
                         generateSlug(slugType, str) {
-                            return Ember.RSVP.resolve(`${str}-slug`);
+                            return RSVP.resolve(`${str}-slug`);
                         }
                     }),
-                    model: Ember.Object.create({slug: ''})
+                    model: EmberObject.create({slug: ''})
                 });
 
                 run(function () {
@@ -402,7 +403,7 @@ describeModule(
 
                     expect(controller.get('model.slug')).to.equal('');
 
-                    Ember.RSVP.resolve(controller.get('lastPromise')).then(function () {
+                    RSVP.resolve(controller.get('lastPromise')).then(function () {
                         expect(controller.get('model.slug')).to.equal('title-slug');
 
                         done();
@@ -412,12 +413,12 @@ describeModule(
 
             it('should not set the destination if the title is "(Untitled)" and the post already has a slug', function (done) {
                 let controller = this.subject({
-                    slugGenerator: Ember.Object.create({
+                    slugGenerator: EmberObject.create({
                         generateSlug(slugType, str) {
-                            return Ember.RSVP.resolve(`${str}-slug`);
+                            return RSVP.resolve(`${str}-slug`);
                         }
                     }),
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         slug: 'whatever'
                     })
                 });
@@ -427,7 +428,7 @@ describeModule(
                 run(function () {
                     controller.set('model.titleScratch', 'title');
 
-                    Ember.RSVP.resolve(controller.get('lastPromise')).then(function () {
+                    RSVP.resolve(controller.get('lastPromise')).then(function () {
                         expect(controller.get('model.slug')).to.equal('whatever');
 
                         done();
@@ -439,7 +440,7 @@ describeModule(
         describe('titleObserver', function () {
             it('should invoke generateAndSetSlug if the post is new and a title has not been set', function (done) {
                 let controller = this.subject({
-                    model: Ember.Object.create({isNew: true}),
+                    model: EmberObject.create({isNew: true}),
                     invoked: 0,
                     generateAndSetSlug() {
                         this.incrementProperty('invoked');
@@ -467,7 +468,7 @@ describeModule(
 
             it('should invoke generateAndSetSlug if the post title is "(Untitled)"', function (done) {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         isNew: false,
                         title: '(Untitled)'
                     }),
@@ -498,7 +499,7 @@ describeModule(
 
             it('should not invoke generateAndSetSlug if the post is new but has a title', function (done) {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         isNew: true,
                         title: 'a title'
                     }),
@@ -531,7 +532,7 @@ describeModule(
         describe('updateSlug', function () {
             it('should reset slugValue to the previous slug when the new slug is blank or unchanged', function () {
                 let controller = this.subject({
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         slug: 'slug'
                     })
                 });
@@ -566,14 +567,14 @@ describeModule(
 
             it('should not set a new slug if the server-generated slug matches existing slug', function (done) {
                 let controller = this.subject({
-                    slugGenerator: Ember.Object.create({
+                    slugGenerator: EmberObject.create({
                         generateSlug(slugType, str) {
-                            let promise = Ember.RSVP.resolve(str.split('#')[0]);
+                            let promise = RSVP.resolve(str.split('#')[0]);
                             this.set('lastPromise', promise);
                             return promise;
                         }
                     }),
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         slug: 'whatever'
                     })
                 });
@@ -582,7 +583,7 @@ describeModule(
                     controller.set('slugValue', 'whatever#slug');
                     controller.send('updateSlug', controller.get('slugValue'));
 
-                    Ember.RSVP.resolve(controller.get('lastPromise')).then(function () {
+                    RSVP.resolve(controller.get('lastPromise')).then(function () {
                         expect(controller.get('model.slug')).to.equal('whatever');
 
                         done();
@@ -592,15 +593,15 @@ describeModule(
 
             it('should not set a new slug if the only change is to the appended increment value', function (done) {
                 let controller = this.subject({
-                    slugGenerator: Ember.Object.create({
+                    slugGenerator: EmberObject.create({
                         generateSlug(slugType, str) {
                             let sanitizedStr = str.replace(/[^a-zA-Z]/g, '');
-                            let promise = Ember.RSVP.resolve(`${sanitizedStr}-2`);
+                            let promise = RSVP.resolve(`${sanitizedStr}-2`);
                             this.set('lastPromise', promise);
                             return promise;
                         }
                     }),
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         slug: 'whatever'
                     })
                 });
@@ -609,7 +610,7 @@ describeModule(
                     controller.set('slugValue', 'whatever!');
                     controller.send('updateSlug', controller.get('slugValue'));
 
-                    Ember.RSVP.resolve(controller.get('lastPromise')).then(function () {
+                    RSVP.resolve(controller.get('lastPromise')).then(function () {
                         expect(controller.get('model.slug')).to.equal('whatever');
 
                         done();
@@ -619,14 +620,14 @@ describeModule(
 
             it('should set the slug if the new slug is different', function (done) {
                 let controller = this.subject({
-                    slugGenerator: Ember.Object.create({
+                    slugGenerator: EmberObject.create({
                         generateSlug(slugType, str) {
-                            let promise = Ember.RSVP.resolve(str);
+                            let promise = RSVP.resolve(str);
                             this.set('lastPromise', promise);
                             return promise;
                         }
                     }),
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         slug: 'whatever',
                         save: K
                     })
@@ -636,7 +637,7 @@ describeModule(
                     controller.set('slugValue', 'changed');
                     controller.send('updateSlug', controller.get('slugValue'));
 
-                    Ember.RSVP.resolve(controller.get('lastPromise')).then(function () {
+                    RSVP.resolve(controller.get('lastPromise')).then(function () {
                         expect(controller.get('model.slug')).to.equal('changed');
 
                         done();
@@ -646,14 +647,14 @@ describeModule(
 
             it('should save the post when the slug changes and the post is not new', function (done) {
                 let controller = this.subject({
-                    slugGenerator: Ember.Object.create({
+                    slugGenerator: EmberObject.create({
                         generateSlug(slugType, str) {
-                            let promise = Ember.RSVP.resolve(str);
+                            let promise = RSVP.resolve(str);
                             this.set('lastPromise', promise);
                             return promise;
                         }
                     }),
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         slug: 'whatever',
                         saved: 0,
                         isNew: false,
@@ -667,7 +668,7 @@ describeModule(
                     controller.set('slugValue', 'changed');
                     controller.send('updateSlug', controller.get('slugValue'));
 
-                    Ember.RSVP.resolve(controller.get('lastPromise')).then(function () {
+                    RSVP.resolve(controller.get('lastPromise')).then(function () {
                         expect(controller.get('model.slug')).to.equal('changed');
                         expect(controller.get('model.saved')).to.equal(1);
 
@@ -678,14 +679,14 @@ describeModule(
 
             it('should not save the post when the slug changes and the post is new', function (done) {
                 let controller = this.subject({
-                    slugGenerator: Ember.Object.create({
+                    slugGenerator: EmberObject.create({
                         generateSlug(slugType, str) {
-                            let promise = Ember.RSVP.resolve(str);
+                            let promise = RSVP.resolve(str);
                             this.set('lastPromise', promise);
                             return promise;
                         }
                     }),
-                    model: Ember.Object.create({
+                    model: EmberObject.create({
                         slug: 'whatever',
                         saved: 0,
                         isNew: true,
@@ -699,7 +700,7 @@ describeModule(
                     controller.set('slugValue', 'changed');
                     controller.send('updateSlug', controller.get('slugValue'));
 
-                    Ember.RSVP.resolve(controller.get('lastPromise')).then(function () {
+                    RSVP.resolve(controller.get('lastPromise')).then(function () {
                         expect(controller.get('model.slug')).to.equal('changed');
                         expect(controller.get('model.saved')).to.equal(0);
 

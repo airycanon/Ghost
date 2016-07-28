@@ -1,12 +1,8 @@
-import Ember from 'ember';
-import ModalComponent from 'ghost/components/modals/base';
-import cajaSanitizers from 'ghost/utils/caja-sanitizers';
-
-const {
-    computed,
-    inject: {service},
-    isEmpty
-} = Ember;
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import {isEmpty} from 'ember-utils';
+import ModalComponent from 'ghost-admin/components/modals/base';
+import cajaSanitizers from 'ghost-admin/utils/caja-sanitizers';
 
 export default ModalComponent.extend({
     model: null,
@@ -15,8 +11,8 @@ export default ModalComponent.extend({
     url: '',
     newUrl: '',
 
-    config: service(),
-    notifications: service(),
+    config: injectService(),
+    notifications: injectService(),
 
     image: computed('model.model', 'model.imageProperty', {
         get() {

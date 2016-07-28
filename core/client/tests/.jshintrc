@@ -8,7 +8,6 @@
     "window",
     "location",
     "setTimeout",
-    "$",
     "-Promise",
     "define",
     "console",
@@ -26,7 +25,9 @@
     "currentURL",
     "currentPath",
     "currentRouteName",
-    "expect"
+    "expect",
+    "fileUpload",
+    "moment"
   ],
   "mocha": true,
   "node": false,

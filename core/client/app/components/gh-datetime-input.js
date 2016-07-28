@@ -1,12 +1,11 @@
-import Ember from 'ember';
-import TextInputMixin from 'ghost/mixins/text-input';
-import boundOneWay from 'ghost/utils/bound-one-way';
-import {formatDate} from 'ghost/utils/date-formatting';
-import {invokeAction} from 'ember-invoke-action';
+import Component from 'ember-component';
+import RSVP from 'rsvp';
+import injectService from 'ember-service/inject';
+import boundOneWay from 'ghost-admin/utils/bound-one-way';
+import {formatDate} from 'ghost-admin/utils/date-formatting';
+import {InvokeActionMixin} from 'ember-invoke-action';
 
-const {Component} = Ember;
-
-export default Component.extend(TextInputMixin, {
+export default Component.extend(InvokeActionMixin, {
     tagName: 'span',
     classNames: 'input-icon icon-calendar',
 
@@ -14,20 +13,26 @@ export default Component.extend(TextInputMixin, {
     inputClass: null,
     inputId: null,
     inputName: null,
+    timeZone: injectService(),
 
     didReceiveAttrs() {
-        let datetime = this.get('datetime') || moment();
+        let promises = {
+            datetime: RSVP.resolve(this.get('datetime') || moment.utc()),
+            blogTimezone: RSVP.resolve(this.get('timeZone.blogTimezone'))
+        };
 
         if (!this.get('update')) {
             throw new Error(`You must provide an \`update\` action to \`{{${this.templateName}}}\`.`);
         }
 
-        this.set('datetime', formatDate(datetime));
+        RSVP.hash(promises).then((hash) => {
+            this.set('datetime', formatDate(hash.datetime || moment.utc(), hash.blogTimezone));
+        });
     },
 
     focusOut() {
         let datetime = this.get('datetime');
 
-        invokeAction(this, 'update', datetime);
+        this.invokeAction('update', datetime);
     }
 });

@@ -1,16 +1,12 @@
-import Ember from 'ember';
+import Component from 'ember-component';
+import computed, {notEmpty} from 'ember-computed';
+import {htmlSafe} from 'ember-string';
+import injectService from 'ember-service/inject';
+import {isBlank} from 'ember-utils';
+import run from 'ember-runloop';
+
 import AjaxService from 'ember-ajax/services/ajax';
-import {NotFoundError} from 'ghost/services/ajax';
-
-const {
-    Component,
-    computed,
-    inject: {service},
-    isBlank,
-    run
-} = Ember;
-
-const {notEmpty} = computed;
+import {isNotFoundError} from 'ember-ajax/errors';
 
 /**
  * A component to manage a user profile image. By default it just handles picture uploads,
@@ -35,9 +31,10 @@ export default Component.extend({
     hasUploadedImage: false,
     fileStorage: true,
     ajax: AjaxService.create(),
-    config: service(),
 
-    ghostPaths: service(),
+    config: injectService(),
+    ghostPaths: injectService(),
+
     displayGravatar: notEmpty('validEmail'),
 
     init() {
@@ -48,7 +45,7 @@ export default Component.extend({
 
     defaultImage: computed('ghostPaths', function () {
         let url = `${this.get('ghostPaths.subdir')}/ghost/img/user-image.png`;
-        return Ember.String.htmlSafe(`background-image: url(${url})`);
+        return htmlSafe(`background-image: url(${url})`);
     }),
 
     trySetValidEmail() {
@@ -76,8 +73,8 @@ export default Component.extend({
                 .catch((error) => {
                     let defaultImageUrl = `url("${this.get('ghostPaths.subdir')}/ghost/img/user-image.png")`;
 
-                    if (error instanceof NotFoundError) {
-                        this.$('.placeholder-img')[0].style.backgroundImage = Ember.String.htmlSafe(defaultImageUrl);
+                    if (isNotFoundError(error)) {
+                        this.$('.placeholder-img')[0].style.backgroundImage = htmlSafe(defaultImageUrl);
                     } else {
                         this.$('.placeholder-img')[0].style.backgroundImage = 'url()';
                     }
@@ -85,7 +82,7 @@ export default Component.extend({
 
             style = `background-image: url(${gravatarUrl})`;
         }
-        return Ember.String.htmlSafe(style);
+        return htmlSafe(style);
     }),
 
     didInsertElement() {

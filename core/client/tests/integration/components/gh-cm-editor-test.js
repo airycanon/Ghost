@@ -5,9 +5,7 @@ import {
     it
 } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import Ember from 'ember';
-
-const {run} = Ember;
+import run from 'ember-runloop';
 
 describeComponent(
     'gh-cm-editor',
@@ -19,7 +17,7 @@ describeComponent(
         it('handles editor events', function () {
             this.set('text', '');
 
-            this.render(hbs`{{gh-cm-editor class="gh-input" value=text}}`);
+            this.render(hbs`{{gh-cm-editor text class="gh-input" update=(action (mut text))}}`);
             let input = this.$('.gh-input');
 
             expect(input.hasClass('focused'), 'has focused class on first render')

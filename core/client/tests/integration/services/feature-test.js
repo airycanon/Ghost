@@ -4,12 +4,14 @@ import {
 } from 'ember-mocha';
 import Pretender from 'pretender';
 import wait from 'ember-test-helpers/wait';
-import FeatureService, {feature} from 'ghost/services/feature';
+import FeatureService, {feature} from 'ghost-admin/services/feature';
 import Ember from 'ember';
-import { errorOverride, errorReset } from 'ghost/tests/helpers/adapter-error';
+import run from 'ember-runloop';
+import {assign} from 'ember-platform';
+import RSVP from 'rsvp';
+import { errorOverride, errorReset } from 'ghost-admin/tests/helpers/adapter-error';
 
-const {RSVP, merge, run} = Ember;
-const EmberError = Ember.Error;
+const {Error: EmberError} = Ember;
 
 function stubSettings(server, labs, validSave = true, validSettings = true) {
     let settings = [
@@ -172,8 +174,16 @@ describeModule(
                 });
 
                 return wait().then(() => {
-                    expect(server.handlers[1].numberOfCalls).to.equal(1);
-                    expect(service.get('notifications.notifications').length).to.equal(1);
+                    expect(
+                        server.handlers[1].numberOfCalls,
+                        'PUT call is made'
+                    ).to.equal(1);
+
+                    expect(
+                        service.get('notifications.alerts').length,
+                        'number of alerts shown'
+                    ).to.equal(1);
+
                     expect(service.get('testFlag')).to.be.false;
                     done();
                 });

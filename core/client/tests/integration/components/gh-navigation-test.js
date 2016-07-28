@@ -2,10 +2,9 @@
 import { expect } from 'chai';
 import { describeComponent, it } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import Ember from 'ember';
-import NavItem from 'ghost/models/navigation-item';
-
-const {run} = Ember;
+import $ from 'jquery';
+import run from 'ember-runloop';
+import NavItem from 'ghost-admin/models/navigation-item';
 
 describeComponent(
     'gh-navigation',
@@ -55,7 +54,7 @@ describeComponent(
             expectedOldIndex = 1;
             expectedNewIndex = 0;
             run(() => {
-                Ember.$(this.$('.gh-blognav-item')[1]).simulateDragSortable({
+                $(this.$('.gh-blognav-item')[1]).simulateDragSortable({
                     move: -1,
                     handle: '.gh-blognav-grab'
                 });
@@ -65,7 +64,7 @@ describeComponent(
             expectedOldIndex = 1;
             expectedNewIndex = 2;
             run(() => {
-                Ember.$(this.$('.gh-blognav-item')[1]).simulateDragSortable({
+                $(this.$('.gh-blognav-item')[1]).simulateDragSortable({
                     move: 1,
                     handle: '.gh-blognav-grab'
                 });

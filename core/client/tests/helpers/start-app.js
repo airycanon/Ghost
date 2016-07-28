@@ -1,8 +1,8 @@
-import Ember from 'ember';
+import {assign} from 'ember-platform';
+import run from 'ember-runloop';
 import Application from '../../app';
 import config from '../../config/environment';
-
-const {assign, run} = Ember;
+import fileUpload from './file-upload';
 
 export default function startApp(attrs) {
     let attributes = assign({}, config.APP);

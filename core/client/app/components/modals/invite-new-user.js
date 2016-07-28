@@ -1,13 +1,11 @@
-import Ember from 'ember';
-import ModalComponent from 'ghost/components/modals/base';
-import ValidationEngine from 'ghost/mixins/validation-engine';
+import RSVP from 'rsvp';
+import injectService from 'ember-service/inject';
+import {A as emberA} from 'ember-array/utils';
+import run from 'ember-runloop';
+import ModalComponent from 'ghost-admin/components/modals/base';
+import ValidationEngine from 'ghost-admin/mixins/validation-engine';
 
-const {
-    RSVP: {Promise},
-    inject: {service},
-    run
-} = Ember;
-const emberA = Ember.A;
+const {Promise} = RSVP;
 
 export default ModalComponent.extend(ValidationEngine, {
     classNames: 'modal-content invite-new-user',
@@ -19,8 +17,8 @@ export default ModalComponent.extend(ValidationEngine, {
 
     validationType: 'inviteUser',
 
-    notifications: service(),
-    store: service(),
+    notifications: injectService(),
+    store: injectService(),
 
     init() {
         this._super(...arguments);
@@ -113,9 +111,9 @@ export default ModalComponent.extend(ValidationEngine, {
                     } else {
                         notifications.showNotification(notificationText, {key: 'invite.send.success'});
                     }
-                }).catch((errors) => {
+                }).catch((error) => {
                     newUser.deleteRecord();
-                    notifications.showErrors(errors, {key: 'invite.send'});
+                    notifications.showAPIError(error, {key: 'invite.send'});
                 }).finally(() => {
                     this.send('closeModal');
                 });

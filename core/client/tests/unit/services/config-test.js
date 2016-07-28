@@ -4,16 +4,12 @@ import {
     describeModule,
     it
 } from 'ember-mocha';
-
-import Ember from 'ember';
+import $ from 'jquery';
 
 describeModule(
     'service:config',
     'Unit: Service: config',
-    {
-        // Specify the other units that are required for this test.
-        // needs: ['service:foo']
-    },
+    {},
     function () {
         // Replace this with your real tests.
         it('exists', function () {
@@ -22,7 +18,7 @@ describeModule(
         });
 
         it('correctly parses a client secret', function () {
-            Ember.$('<meta>').attr('name', 'env-clientSecret')
+            $('<meta>').attr('name', 'env-clientSecret')
                 .attr('content', '23e435234423')
                 .appendTo('head');
 

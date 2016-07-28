@@ -24,14 +24,30 @@
                                         {{#if post.page}}
                                             <span class="page">页面</span>
                                         {{else}}
-                                            <time datetime="{{post.publishedAt}}" class="date published">
-                                                发布于 {{gh-format-timeago post.publishedAt}}
+                                            <time datetime="{{post.publishedAtUTC}}" class="date published">
+                                                发布于 {{gh-format-timeago post.publishedAtUTC}}
                                             </time>
                                         {{/if}}
                                     {{else}}
-                                        <span class="draft">草稿</span>
+                    					{{#if component.isScheduled}}
+                    						<span class="scheduled">定时</span>
+                                            <span>&ndash;
+                                                <time datetime="{{post.publishedAtUTC}}" class-="date scheduled">
+                                                    {{gh-format-time-scheduled post.publishedAtUTC component.blogTimezone}}
+                                                </time>
+                                            </span>
+                    					{{else}}
+                                            <span class="draft">草稿</span>
+                    					{{/if}}
                                     {{/if}}
                                 </span>
+                                {{#if feature.internalTags}}
+                                    <div class="internal-tags-list">
+                                        {{#each post.internalTags as |tag|}}
+                                            <span class="label label-default">{{tag.name}}</span>
+                                        {{/each}}
+                                    </div>
+                                {{/if}}
                             </section>
                         {{/link-to}}
                     {{/gh-posts-list-item}}

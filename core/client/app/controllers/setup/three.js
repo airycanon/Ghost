@@ -1,20 +1,18 @@
-import Ember from 'ember';
+import Controller from 'ember-controller';
+import RSVP from 'rsvp';
+import computed, {alias} from 'ember-computed';
+import {A as emberA} from 'ember-array/utils';
+import injectService from 'ember-service/inject';
+import injectController from 'ember-controller/inject';
+import {htmlSafe} from 'ember-string';
+import run from 'ember-runloop';
 import DS from 'ember-data';
 
-const {
-    Controller,
-    RSVP,
-    computed,
-    inject: {service, controller},
-    run
-} = Ember;
 const {Errors} = DS;
-const {alias} = computed;
-const emberA = Ember.A;
 
 export default Controller.extend({
-    notifications: service(),
-    two: controller('setup/two'),
+    notifications: injectService(),
+    two: injectController('setup/two'),
 
     errors: Errors.create(),
     hasValidated: emberA(),
@@ -90,8 +88,8 @@ export default Controller.extend({
         validationResult.forEach((error) => {
             // Only one error type here so far, but one day the errors might be more detailed
             switch (error.error) {
-            case 'email':
-                errors.add(property, `${error.user} is not a valid email.`);
+                case 'email':
+                    errors.add(property, `${error.user} is not a valid email.`);
             }
         });
 
@@ -205,7 +203,7 @@ export default Controller.extend({
                             message += erroredEmails.join(', ');
                             message += ". Please check your email configuration, see <a href=\'http://support.ghost.org/mail\' target=\'_blank\'>http://support.ghost.org/mail</a> for instructions";
 
-                            message = Ember.String.htmlSafe(message);
+                            message = htmlSafe(message);
                             notifications.showAlert(message, {type: 'error', delayed: successCount > 0, key: 'signup.send-invitations.failed'});
                         }
 

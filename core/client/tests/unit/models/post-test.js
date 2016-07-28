@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import run from 'ember-runloop';
+import EmberObject from 'ember-object';
 import {
     describeModel,
     it
@@ -18,19 +19,29 @@ describeModel(
             expect(model.validationType).to.equal('post');
         });
 
-        it('isPublished and isDraft are correct', function () {
+        it('isPublished, isDraft and isScheduled are correct', function () {
             let model = this.subject({
                 status: 'published'
             });
 
             expect(model.get('isPublished')).to.be.ok;
             expect(model.get('isDraft')).to.not.be.ok;
+            expect(model.get('isScheduled')).to.not.be.ok;
 
-            Ember.run(function () {
+            run(function () {
                 model.set('status', 'draft');
 
                 expect(model.get('isPublished')).to.not.be.ok;
                 expect(model.get('isDraft')).to.be.ok;
+                expect(model.get('isScheduled')).to.not.be.ok;
+            });
+
+            run(function () {
+                model.set('status', 'scheduled');
+
+                expect(model.get('isScheduled')).to.be.ok;
+                expect(model.get('isPublished')).to.not.be.ok;
+                expect(model.get('isDraft')).to.not.be.ok;
             });
         });
 
@@ -40,11 +51,11 @@ describeModel(
                 authorId: 15
             });
             /* jscs:enable requireCamelCaseOrUpperCaseIdentifiers */
-            let user = Ember.Object.create({id: '15'});
+            let user = EmberObject.create({id: '15'});
 
             expect(model.isAuthoredByUser(user)).to.be.ok;
 
-            Ember.run(function () {
+            run(function () {
                 model.set('authorId', 1);
 
                 expect(model.isAuthoredByUser(user)).to.not.be.ok;
@@ -54,7 +65,7 @@ describeModel(
         it('updateTags removes and deletes old tags', function () {
             let model = this.subject();
 
-            Ember.run(this, function () {
+            run(this, function () {
                 let modelTags = model.get('tags');
                 let tag1 = this.store().createRecord('tag', {id: '1'});
                 let tag2 = this.store().createRecord('tag', {id: '2'});

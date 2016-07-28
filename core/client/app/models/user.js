@@ -1,15 +1,10 @@
 /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
-import Ember from 'ember';
 import Model from 'ember-data/model';
 import attr from 'ember-data/attr';
-import { hasMany } from 'ember-data/relationships';
-import ValidationEngine from 'ghost/mixins/validation-engine';
-
-const {
-    computed,
-    inject: {service}
-} = Ember;
-const {equal, empty} = computed;
+import {hasMany} from 'ember-data/relationships';
+import computed, {equal} from 'ember-computed';
+import injectService from 'ember-service/inject';
+import ValidationEngine from 'ghost-admin/mixins/validation-engine';
 
 export default Model.extend(ValidationEngine, {
     validationType: 'user',
@@ -28,10 +23,10 @@ export default Model.extend(ValidationEngine, {
     language: attr('string', {defaultValue: 'en_US'}),
     metaTitle: attr('string'),
     metaDescription: attr('string'),
-    lastLogin: attr('moment-date'),
-    createdAt: attr('moment-date'),
+    lastLoginUTC: attr('moment-utc'),
+    createdAtUTC: attr('moment-utc'),
     createdBy: attr('number'),
-    updatedAt: attr('moment-date'),
+    updatedAtUTC: attr('moment-utc'),
     updatedBy: attr('number'),
     roles: hasMany('role', {
         embedded: 'always',
@@ -41,8 +36,9 @@ export default Model.extend(ValidationEngine, {
     facebook: attr('facebook-url-user'),
     twitter: attr('twitter-url-user'),
 
-    ghostPaths: service(),
-    ajax: service(),
+    ghostPaths: injectService(),
+    ajax: injectService(),
+    session: injectService(),
 
     // TODO: Once client-side permissions are in place,
     // remove the hard role check.
@@ -51,7 +47,9 @@ export default Model.extend(ValidationEngine, {
     isAdmin: equal('role.name', 'Administrator'),
     isOwner: equal('role.name', 'Owner'),
 
-    isPasswordValid: empty('passwordValidationErrors.[]'),
+    isLoggedIn: computed('id', 'session.user.id', function () {
+        return this.get('id') === this.get('session.user.id');
+    }),
 
     active: computed('status', function () {
         return ['active', 'warn-1', 'warn-2', 'warn-3', 'warn-4', 'locked'].indexOf(this.get('status')) > -1;
@@ -62,20 +60,6 @@ export default Model.extend(ValidationEngine, {
     }),
 
     pending: equal('status', 'invited-pending'),
-
-    passwordValidationErrors: computed('password', 'newPassword', 'ne2Password', function () {
-        let validationErrors = [];
-
-        if (!validator.equals(this.get('newPassword'), this.get('ne2Password'))) {
-            validationErrors.push({message: '两次输入的密码不一致。'});
-        }
-
-        if (!validator.isLength(this.get('newPassword'), 8)) {
-            validationErrors.push({message: '密码长度至少为8位。'});
-        }
-
-        return validationErrors;
-    }),
 
     role: computed('roles', {
         get() {
@@ -92,16 +76,19 @@ export default Model.extend(ValidationEngine, {
 
     saveNewPassword() {
         let url = this.get('ghostPaths.url').api('users', 'password');
+        let validation = this.get('isLoggedIn') ? 'ownPasswordChange' : 'passwordChange';
 
-        return this.get('ajax').put(url, {
-            data: {
-                password: [{
-                    user_id: this.get('id'),
-                    oldPassword: this.get('password'),
-                    newPassword: this.get('newPassword'),
-                    ne2Password: this.get('ne2Password')
-                }]
-            }
+        return this.validate({property: validation}).then(() => {
+            return this.get('ajax').put(url, {
+                data: {
+                    password: [{
+                        user_id: this.get('id'),
+                        oldPassword: this.get('password'),
+                        newPassword: this.get('newPassword'),
+                        ne2Password: this.get('ne2Password')
+                    }]
+                }
+            });
         });
     },
 

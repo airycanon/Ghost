@@ -1,6 +1,6 @@
-import Ember from 'ember';
-
-const {Component, observer} = Ember;
+import $ from 'jquery';
+import Component from 'ember-component';
+import observer from 'ember-metal/observer';
 
 export default Component.extend({
     classNames: ['gh-app'],
@@ -10,6 +10,6 @@ export default Component.extend({
     toggleSettingsMenuBodyClass: observer('showSettingsMenu', function () {
         let showSettingsMenu = this.get('showSettingsMenu');
 
-        Ember.$('body').toggleClass('settings-menu-expanded', showSettingsMenu);
+        $('body').toggleClass('settings-menu-expanded', showSettingsMenu);
     })
 });

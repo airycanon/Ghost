@@ -1,16 +1,16 @@
 /* global key */
+import Component from 'ember-component';
 import Ember from 'ember';
-import boundOneWay from 'ghost/utils/bound-one-way';
+import computed, {reads} from 'ember-computed';
+import get from 'ember-metal/get';
+import injectService from 'ember-service/inject';
+import {htmlSafe} from 'ember-string';
+
+import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import {invokeAction} from 'ember-invoke-action';
 
-const {
-    Component,
-    Handlebars,
-    computed,
-    get,
-    inject: {service}
-} = Ember;
-const {reads} = computed;
+// ember-cli-shims doesn't export this
+const {Handlebars} = Ember;
 
 export default Component.extend({
 
@@ -24,16 +24,17 @@ export default Component.extend({
 
     isViewingSubview: false,
 
-    config: service(),
-    mediaQueries: service(),
+    feature: injectService(),
+    config: injectService(),
+    mediaQueries: injectService(),
 
     isMobile: reads('mediaQueries.maxWidth600'),
 
     title: computed('tag.isNew', function () {
         if (this.get('tag.isNew')) {
-            return '新建标签';
+            return 'New Tag';
         } else {
-            return '标签设置';
+            return 'Tag Settings';
         }
     }),
 
@@ -45,7 +46,7 @@ export default Component.extend({
         if (metaTitle && metaTitle.length > 70) {
             metaTitle = metaTitle.substring(0, 70).trim();
             metaTitle = Handlebars.Utils.escapeExpression(metaTitle);
-            metaTitle = Ember.String.htmlSafe(`${metaTitle}&hellip;`);
+            metaTitle = htmlSafe(`${metaTitle}&hellip;`);
         }
 
         return metaTitle;
@@ -64,7 +65,7 @@ export default Component.extend({
 
         if (seoURL.length > 70) {
             seoURL = seoURL.substring(0, 70).trim();
-            seoURL = Ember.String.htmlSafe(`${seoURL}&hellip;`);
+            seoURL = htmlSafe(`${seoURL}&hellip;`);
         }
 
         return seoURL;
@@ -78,7 +79,7 @@ export default Component.extend({
         if (metaDescription && metaDescription.length > 156) {
             metaDescription = metaDescription.substring(0, 156).trim();
             metaDescription = Handlebars.Utils.escapeExpression(metaDescription);
-            metaDescription = Ember.String.htmlSafe(`${metaDescription}&hellip;`);
+            metaDescription = htmlSafe(`${metaDescription}&hellip;`);
         }
 
         return metaDescription;
@@ -113,11 +114,11 @@ export default Component.extend({
         },
 
         setCoverImage(image) {
-            invokeAction(this, 'setProperty', 'image', image);
+            this.send('setProperty', 'image', image);
         },
 
         clearCoverImage() {
-            invokeAction(this, 'setProperty', 'image', '');
+            this.send('setProperty', 'image', '');
         },
 
         openMeta() {

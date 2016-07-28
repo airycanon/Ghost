@@ -5,7 +5,7 @@ const {Route} = Ember;
 export default Route.extend({
     controllerName: 'error',
     templateName: 'error',
-    titleToken: '错误',
+    titleToken: 'Error',
 
     model() {
         return {

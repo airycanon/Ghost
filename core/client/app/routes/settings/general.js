@@ -1,11 +1,15 @@
-import AuthenticatedRoute from 'ghost/routes/authenticated';
-import CurrentUserSettings from 'ghost/mixins/current-user-settings';
-import styleBody from 'ghost/mixins/style-body';
+import RSVP from 'rsvp';
+import injectService from 'ember-service/inject';
+import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
+import CurrentUserSettings from 'ghost-admin/mixins/current-user-settings';
+import styleBody from 'ghost-admin/mixins/style-body';
 
 export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, {
     titleToken: '设置 - 常规',
 
     classNames: ['settings-view-general'],
+
+    config: injectService(),
 
     beforeModel() {
         this._super(...arguments);
@@ -15,7 +19,15 @@ export default AuthenticatedRoute.extend(styleBody, CurrentUserSettings, {
     },
 
     model() {
-        return this.store.queryRecord('setting', {type: 'blog,theme,private'});
+        return RSVP.hash({
+            settings: this.store.queryRecord('setting', {type: 'blog,theme,private'}),
+            availableTimezones: this.get('config.availableTimezones')
+        });
+    },
+
+    setupController(controller, models) {
+        controller.set('model', models.settings);
+        controller.set('availableTimezones', models.availableTimezones);
     },
 
     actions: {

@@ -125,7 +125,7 @@ export default [
         id: 12,
         uuid: 'd806f358-7996-4c74-b153-8876959c4b70',
         key: 'labs',
-        value: '{"codeInjectionUI":true,"subscribers":true}',
+        value: '{"subscribers":true,"internalTags":true}',
         type: 'blog',
         created_at: '2015-01-12T18:29:01.000Z',
         created_by: 1,
@@ -200,6 +200,17 @@ export default [
         updated_by: 1,
         uuid: '5130441f-e4c7-4750-9692-a22d841ab049',
         value: '@test'
+    },
+    {
+        created_at: '2015-09-11T09:44:30.810Z',
+        created_by: 1,
+        id: 16,
+        key: 'activeTimezone',
+        type: 'blog',
+        updated_at: '2015-09-23T13:32:49.868Z',
+        updated_by: 1,
+        uuid: '310c9169-9613-48b0-8bc4-d1e1c9be85b8',
+        value: 'Etc/UTC'
     },
     {
         key: 'availableThemes',

@@ -1,12 +1,8 @@
-import Ember from 'ember';
-import getRequestErrorMessage from 'ghost/utils/ajax';
-
-const {
-    Mixin,
-    computed,
-    RSVP,
-    inject: {service}
-} = Ember;
+import Mixin from 'ember-metal/mixin';
+import {assign} from 'ember-platform';
+import computed from 'ember-computed';
+import RSVP from 'rsvp';
+import injectService from 'ember-service/inject';
 
 let defaultPaginationSettings = {
     page: 1,
@@ -14,7 +10,7 @@ let defaultPaginationSettings = {
 };
 
 export default Mixin.create({
-    notifications: service(),
+    notifications: injectService(),
 
     paginationModel: null,
     paginationSettings: null,
@@ -35,32 +31,18 @@ export default Mixin.create({
 
     init() {
         let paginationSettings = this.get('paginationSettings');
-        let settings = Ember.assign({}, defaultPaginationSettings, paginationSettings);
+        let settings = assign({}, defaultPaginationSettings, paginationSettings);
 
         this._super(...arguments);
         this.set('paginationSettings', settings);
         this.set('paginationMeta', {});
     },
 
-    /**
-     * Takes an ajax response, concatenates any error messages, then generates an error notification.
-     * @param {jqXHR} response The jQuery ajax reponse object.
-     * @return
-     */
-    reportLoadError(response) {
-        let message = 'A problem was encountered while loading more records';
-
-        if (response) {
-            // Get message from response
-            message += `: ${getRequestErrorMessage(response, true)}`;
-        } else {
-            message += '.';
-        }
-
-        this.get('notifications').showAlert(message, {type: 'error', key: 'pagination.load.failed'});
+    reportLoadError(error) {
+        this.get('notifications').showAPIError(error, {key: 'pagination.load.failed'});
     },
 
-    loadFirstPage() {
+    loadFirstPage(transition) {
         let paginationSettings = this.get('paginationSettings');
         let modelName = this.get('paginationModel');
 
@@ -71,8 +53,14 @@ export default Mixin.create({
         return this.get('store').query(modelName, paginationSettings).then((results) => {
             this.set('paginationMeta', results.meta);
             return results;
-        }).catch((response) => {
-            this.reportLoadError(response);
+        }).catch((error) => {
+            // if we have a transition we're executing in a route hook so we
+            // want to throw in order to trigger the global error handler
+            if (transition) {
+                throw error;
+            } else {
+                this.reportLoadError(error);
+            }
         }).finally(() => {
             this.set('isLoading', false);
         });
@@ -101,8 +89,8 @@ export default Mixin.create({
                 return store.query(modelName, paginationSettings).then((results) => {
                     this.set('paginationMeta', results.meta);
                     return results;
-                }).catch((response) => {
-                    this.reportLoadError(response);
+                }).catch((error) => {
+                    this.reportLoadError(error);
                 }).finally(() => {
                     this.set('isLoading', false);
                 });

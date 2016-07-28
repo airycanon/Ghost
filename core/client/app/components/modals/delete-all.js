@@ -1,18 +1,14 @@
-import Ember from 'ember';
-import ModalComponent from 'ghost/components/modals/base';
-
-const {
-    inject: {service}
-} = Ember;
+import injectService from 'ember-service/inject';
+import ModalComponent from 'ghost-admin/components/modals/base';
 
 export default ModalComponent.extend({
 
     submitting: false,
 
-    ghostPaths: service(),
-    notifications: service(),
-    store: service(),
-    ajax: service(),
+    ghostPaths: injectService(),
+    notifications: injectService(),
+    store: injectService(),
+    ajax: injectService(),
 
     _deleteAll() {
         let deleteUrl = this.get('ghostPaths.url').api('db');

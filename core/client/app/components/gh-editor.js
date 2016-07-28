@@ -1,11 +1,11 @@
-import Ember from 'ember';
-import ShortcutsMixin from 'ghost/mixins/shortcuts';
-import imageManager from 'ghost/utils/ed-image-manager';
-import editorShortcuts from 'ghost/utils/editor-shortcuts';
-import {invokeAction} from 'ember-invoke-action';
+import Component from 'ember-component';
+import computed, {equal} from 'ember-computed';
+import run from 'ember-runloop';
 
-const {Component, computed, run} = Ember;
-const {equal} = computed;
+import ShortcutsMixin from 'ghost-admin/mixins/shortcuts';
+import imageManager from 'ghost-admin/utils/ed-image-manager';
+import editorShortcuts from 'ghost-admin/utils/editor-shortcuts';
+import {invokeAction} from 'ember-invoke-action';
 
 export default Component.extend(ShortcutsMixin, {
     tagName: 'section',

@@ -1,5 +1,7 @@
 import Ember from 'ember';
-import ApplicationSerializer from 'ghost/serializers/application';
+import ApplicationSerializer from 'ghost-admin/serializers/application';
+
+const {String: {pluralize}} = Ember;
 
 export default ApplicationSerializer.extend({
     serializeIntoHash(hash, type, record, options) {
@@ -7,7 +9,7 @@ export default ApplicationSerializer.extend({
         options = options || {};
         options.includeId = false;
 
-        let root = Ember.String.pluralize(type.modelName);
+        let root = pluralize(type.modelName);
         let data = this.serialize(record, options);
         let payload = [];
 

@@ -1,18 +1,13 @@
 /* jshint expr:true */
 import { expect } from 'chai';
 import { describeModule, it } from 'ember-mocha';
-import Ember from 'ember';
-import NavigationItem from 'ghost/models/navigation-item';
-
-const emberA = Ember.A;
+import {A as emberA} from 'ember-array/utils';
+import NavigationItem from 'ghost-admin/models/navigation-item';
 
 describeModule(
     'transform:navigation-settings',
     'Unit: Transform: navigation-settings',
-    {
-        // Specify the other units that are required for this test.
-        // needs: ['transform:foo']
-    },
+    {},
     function() {
         it('deserializes navigation json', function () {
             let transform = this.subject();

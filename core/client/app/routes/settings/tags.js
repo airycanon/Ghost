@@ -1,12 +1,12 @@
 /* global key */
-import Ember from 'ember';
-import AuthenticatedRoute from 'ghost/routes/authenticated';
-import CurrentUserSettings from 'ghost/mixins/current-user-settings';
-import ShortcutsRoute from 'ghost/mixins/shortcuts-route';
-import PaginationMixin from 'ghost/mixins/pagination';
+import $ from 'jquery';
+import AuthenticatedRoute from 'ghost-admin/routes/authenticated';
+import CurrentUserSettings from 'ghost-admin/mixins/current-user-settings';
+import ShortcutsRoute from 'ghost-admin/mixins/shortcuts-route';
+import PaginationMixin from 'ghost-admin/mixins/pagination';
 
 export default AuthenticatedRoute.extend(CurrentUserSettings, PaginationMixin, ShortcutsRoute, {
-    titleToken: 'Settings - Tags',
+    titleToken: '设置 - 标签',
 
     paginationModel: 'tag',
     paginationSettings: {
@@ -29,8 +29,8 @@ export default AuthenticatedRoute.extend(CurrentUserSettings, PaginationMixin, S
             .then(this.transitionAuthor());
     },
 
-    model() {
-        return this.loadFirstPage().then(() => {
+    model(params, transition) {
+        return this.loadFirstPage(transition).then(() => {
             return this.store.filter('tag', (tag) => {
                 return !tag.get('isNew');
             });
@@ -62,7 +62,7 @@ export default AuthenticatedRoute.extend(CurrentUserSettings, PaginationMixin, S
     },
 
     scrollContent(amount) {
-        let content = Ember.$('.tag-settings-pane');
+        let content = $('.tag-settings-pane');
         let scrolled = content.scrollTop();
 
         content.scrollTop(scrolled + 50 * amount);

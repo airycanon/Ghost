@@ -1,10 +1,6 @@
-import Ember from 'ember';
-
-const {
-    Component,
-    computed,
-    inject: {service}
-} = Ember;
+import Component from 'ember-component';
+import computed from 'ember-computed';
+import service from 'ember-service/inject';
 
 export default Component.extend({
     tagName: '',
@@ -14,10 +10,10 @@ export default Component.extend({
 
     notifications: service(),
 
-    createdAt: computed('user.createdAt', function () {
-        let createdAt = this.get('user.createdAt');
+    createdAtUTC: computed('user.createdAtUTC', function () {
+        let createdAtUTC = this.get('user.createdAtUTC');
 
-        return createdAt ? createdAt.fromNow() : '';
+        return createdAtUTC ? moment(createdAtUTC).fromNow() : '';
     }),
 
     actions: {

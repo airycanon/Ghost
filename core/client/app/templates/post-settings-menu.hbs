@@ -10,7 +10,8 @@
                 image=model.image
                 text="添加图片"
                 update=(action "setCoverImage")
-                remove=(action "clearCoverImage")}}
+                remove=(action "clearCoverImage")
+            }}
             <form>
             <div class="form-group">
                 <label for="url">文章链接</label>
@@ -25,18 +26,24 @@
                 {{/if}}
 
                 <span class="input-icon icon-link">
-                    {{gh-input class="post-setting-slug" id="url" value=slugValue name="post-setting-slug" focus-out="updateSlug" stopEnterKeyDownPropagation="true"}}
+                    {{gh-input slugValue class="post-setting-slug" id="url" name="post-setting-slug" focusOut=(action "updateSlug" slugValue) stopEnterKeyDownPropagation="true" update=(action (mut slugValue))}}
                 </span>
                 {{gh-url-preview slug=slugValue tagName="p" classNames="description"}}
             </div>
 
             {{#gh-form-group errors=model.errors property="post-setting-date"}}
-                <label for="post-setting-date">发布时间</label>
-                {{gh-datetime-input value=model.publishedAt
-                                    update=(action "setPublishedAt")
-                                    inputClass="post-setting-date"
-                                    inputId="post-setting-date"
-                                    inputName="post-setting-date"}}
+                {{#if model.timeScheduled}}
+                    <label for="post-setting-date">指定日期</label>
+                {{else}}
+                    <label for="post-setting-date">发布日期</label>
+                {{/if}}
+                {{gh-datetime-input
+                    value=model.publishedAtUTC
+                    update=(action "setPublishedAtUTC")
+                    inputClass="post-setting-date"
+                    inputId="post-setting-date"
+                    inputName="post-setting-date"
+                }}
                 {{gh-error-message errors=model.errors property="post-setting-date"}}
             {{/gh-form-group}}
 
@@ -86,13 +93,13 @@
 
             <div class="form-group for-checkbox">
                 <label class="checkbox" for="static-page" {{action "togglePage" bubbles="false"}}>
-                    {{input type="checkbox" name="static-page" id="static-page" class="gh-input post-setting-static-page" checked=model.page}}
+                    {{one-way-checkbox model.page type="checkbox" name="static-page" id="static-page" class="gh-input post-setting-static-page" update=(action (mut model.page))}}
                     <span class="input-toggle-component"></span>
                     <p>把该文章转化为静态页面</p>
                 </label>
 
                 <label class="checkbox" for="featured" {{action "toggleFeatured" bubbles="false"}}>
-                    {{input type="checkbox" name="featured" id="featured" class="gh-input post-setting-featured" checked=model.featured}}
+                    {{one-way-checkbox model.featured type="checkbox" name="featured" id="featured" class="gh-input post-setting-featured" update=(action (mut model.featured))}}
                     <span class="input-toggle-component"></span>
                     <p>使该文章成为专题</p>
                 </label>
@@ -115,14 +122,14 @@
             <form {{action "discardEnter" on="submit"}}>
             {{#gh-form-group errors=model.errors property="metaTitle"}}
                 <label for="meta-title">Meta Title</label>
-                {{gh-input class="post-setting-meta-title" id="meta-title" value=metaTitleScratch name="post-setting-meta-title" focus-out="setMetaTitle" stopEnterKeyDownPropagation="true"}}
+                {{gh-input metaTitleScratch class="post-setting-meta-title" id="meta-title" name="post-setting-meta-title" focusOut=(action "setMetaTitle" metaTitleScratch) stopEnterKeyDownPropagation="true" update=(action (mut metaTitleScratch))}}
                 <p><b>70</b> 字以内效果最佳，已输入 {{gh-count-down-characters metaTitleScratch 70}} 字。</p>
                 {{gh-error-message errors=model.errors property="metaTitle"}}
             {{/gh-form-group}}
 
             {{#gh-form-group errors=model.errors property="metaDescription"}}
-                <label for="meta-description">Meta 简介</label>
-                {{gh-textarea class="gh-input post-setting-meta-description" id="meta-description" value=metaDescriptionScratch name="post-setting-meta-description" focus-out="setMetaDescription" stopEnterKeyDownPropagation="true"}}
+                <label for="meta-description">Meta Description</label>
+                {{gh-textarea metaDescriptionScratch class="post-setting-meta-description" id="meta-description" name="post-setting-meta-description" focusOut=(action "setMetaDescription" metaDescriptionScratch) stopEnterKeyDownPropagation="true" update=(action (mut metaDescriptionScratch))}}
                 <p><b>156</b> 字以内效果最佳，已输入 {{gh-count-down-characters metaDescriptionScratch 156}} 字</p>
                 {{gh-error-message errors=model.errors property="metaDescription"}}
             {{/gh-form-group}}

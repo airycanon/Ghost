@@ -1,8 +1,7 @@
 /* global Showdown, html_sanitize*/
-import Ember from 'ember';
-import cajaSanitizers from 'ghost/utils/caja-sanitizers';
-
-const {Helper} = Ember;
+import {helper} from 'ember-helper';
+import {htmlSafe} from 'ember-string';
+import cajaSanitizers from 'ghost-admin/utils/caja-sanitizers';
 
 let showdown = new Showdown.converter({extensions: ['ghostimagepreview', 'ghostgfm', 'footnotes', 'highlight']});
 
@@ -28,7 +27,7 @@ export function formatMarkdown(params) {
     escapedhtml = html_sanitize(escapedhtml, cajaSanitizers.url, cajaSanitizers.id);
     // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
 
-    return Ember.String.htmlSafe(escapedhtml);
+    return htmlSafe(escapedhtml);
 }
 
-export default Helper.helper(formatMarkdown);
+export default helper(formatMarkdown);

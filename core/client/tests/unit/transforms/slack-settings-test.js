@@ -1,18 +1,13 @@
 /* jshint expr:true */
 import { expect } from 'chai';
 import { describeModule, it } from 'ember-mocha';
-import Ember from 'ember';
-import SlackIntegration from 'ghost/models/slack-integration';
-
-const emberA = Ember.A;
+import {A as emberA} from 'ember-array/utils';
+import SlackIntegration from 'ghost-admin/models/slack-integration';
 
 describeModule(
     'transform:slack-settings',
     'Unit: Transform: slack-settings',
-    {
-        // Specify the other units that are required for this test.
-        // needs: ['transform:foo']
-    },
+    {},
     function() {
         it('deserializes settings json', function () {
             let transform = this.subject();

@@ -1,6 +1,5 @@
-import Ember from 'ember';
-
-const {assign} = Ember;
+import $ from 'jquery';
+import {assign} from 'ember-platform';
 
 export default {
     name: 'jquery-ajax-oauth-prefilter',
@@ -9,7 +8,7 @@ export default {
     initialize(application) {
         let session = application.lookup('service:session');
 
-        Ember.$.ajaxPrefilter(function (options) {
+        $.ajaxPrefilter(function (options) {
             session.authorize('authorizer:oauth2', function (headerName, headerValue) {
                 let headerObject = {};
 

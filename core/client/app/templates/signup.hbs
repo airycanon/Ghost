@@ -12,24 +12,26 @@
                 <input style="display:none;" type="password" name="fakepasswordremembered"/>
 
                 {{gh-profile-image fileStorage=config.fileStorage email=model.email setImage="setImage"}}
-                {{#gh-form-group errors=model.errors hasValidated=hasValidated property="email"}}
+
+                {{#gh-form-group}}
                     <label for="email-address">邮箱</label>
                     <span class="input-icon icon-mail">
-                        {{gh-input type="email" name="email" placeholder="Eg. john@example.com" enter=(action "signup") disabled="disabled" autocorrect="off" value=model.email focusOut=(action "validate" "email")}}
+                        {{gh-input model.email type="email" name="email" placeholder="Eg. john@example.com" disabled="disabled" autocorrect="off"}}
                     </span>
-                    {{gh-error-message errors=model.errors property="email"}}
                 {{/gh-form-group}}
+
                 {{#gh-form-group errors=model.errors hasValidated=hasValidated property="name"}}
                     <label for="full-name">用户名</label>
                     <span class="input-icon icon-user">
-                        {{gh-trim-focus-input tabindex="1" type="text" name="name" placeholder="Eg. John H. Watson" enter=(action "signup") autocorrect="off" value=model.name focusOut=(action "validate" "name")}}
+                        {{gh-trim-focus-input model.name tabindex="1" type="text" name="name" placeholder="例如 John H. Watson" onenter=(action "signup") autocorrect="off" focusOut=(action "validate" "name") update=(action (mut model.name))}}
                     </span>
                     {{gh-error-message errors=model.errors property="name"}}
                 {{/gh-form-group}}
+
                 {{#gh-form-group errors=model.errors hasValidated=hasValidated property="password"}}
                     <label for="password">密码</label>
                     <span class="input-icon icon-lock">
-                        {{gh-input tabindex="2" type="password" name="password" enter=(action "signup") autocorrect="off" value=model.password focusOut=(action "validate" "password")}}
+                        {{gh-input model.password tabindex="2" type="password" name="password" placeholder="至少8个字符" onenter=(action "signup") autocorrect="off" focusOut=(action "validate" "password") update=(action (mut model.password))}}
                     </span>
                     {{gh-error-message errors=model.errors property="password"}}
                 {{/gh-form-group}}

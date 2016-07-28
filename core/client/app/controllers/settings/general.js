@@ -1,22 +1,20 @@
-import Ember from 'ember';
-import SettingsSaveMixin from 'ghost/mixins/settings-save';
-import randomPassword from 'ghost/utils/random-password';
-
-const {
-    Controller,
-    computed,
-    inject: {service},
-    observer,
-    run
-} = Ember;
+import Controller from 'ember-controller';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import observer from 'ember-metal/observer';
+import run from 'ember-runloop';
+import SettingsSaveMixin from 'ghost-admin/mixins/settings-save';
+import randomPassword from 'ghost-admin/utils/random-password';
 
 export default Controller.extend(SettingsSaveMixin, {
 
     showUploadLogoModal: false,
     showUploadCoverModal: false,
 
-    notifications: service(),
-    config: service(),
+    availableTimezones: null,
+
+    notifications: injectService(),
+    config: injectService(),
     _scratchFacebook: null,
     _scratchTwitter: null,
 
@@ -82,7 +80,6 @@ export default Controller.extend(SettingsSaveMixin, {
     save() {
         let notifications = this.get('notifications');
         let config = this.get('config');
-
         return this.get('model').save().then((model) => {
             config.set('blogTitle', model.get('title'));
 
@@ -111,7 +108,9 @@ export default Controller.extend(SettingsSaveMixin, {
         setTheme(theme) {
             this.set('model.activeTheme', theme.name);
         },
-
+        setTimezone(timezone) {
+            this.set('model.activeTimezone', timezone.name);
+        },
         toggleUploadCoverModal() {
             this.toggleProperty('showUploadCoverModal');
         },

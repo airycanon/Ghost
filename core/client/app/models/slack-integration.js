@@ -1,12 +1,9 @@
-import Ember from 'ember';
-import ValidationEngine from 'ghost/mixins/validation-engine';
+import computed from 'ember-computed';
+import {isBlank} from 'ember-utils';
+import EmberObject from 'ember-object';
+import ValidationEngine from 'ghost-admin/mixins/validation-engine';
 
-const {
-    computed,
-    isBlank
-} = Ember;
-
-export default Ember.Object.extend(ValidationEngine, {
+export default EmberObject.extend(ValidationEngine, {
     // values entered here will act as defaults
     url: '',
 

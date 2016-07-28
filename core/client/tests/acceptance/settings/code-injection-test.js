@@ -6,9 +6,10 @@ import {
   afterEach
 } from 'mocha';
 import { expect } from 'chai';
+import $ from 'jquery';
 import startApp from '../../helpers/start-app';
 import destroyApp from '../../helpers/destroy-app';
-import { invalidateSession, authenticateSession } from 'ghost/tests/helpers/ember-simple-auth';
+import { invalidateSession, authenticateSession } from 'ghost-admin/tests/helpers/ember-simple-auth';
 
 describe('Acceptance: Settings - Code-Injection', function() {
     let application;

@@ -1,18 +1,21 @@
 import Ember from 'ember';
+import Route from 'ember-route';
+import injectService from 'ember-service/inject';
+import EmberObject from 'ember-object';
+import run from 'ember-runloop';
+
 import AjaxService from 'ember-ajax/services/ajax';
 
-const {
-    Route,
-    inject: {service},
-    run
-} = Ember;
+// ember-cli-shims doesn't export Ember.testing
+const {testing} = Ember;
 
-let DownloadCountPoller = Ember.Object.extend({
+let DownloadCountPoller = EmberObject.extend({
     url: null,
     count: '',
     runId: null,
 
     ajax: AjaxService.create(),
+    notifications: injectService(),
 
     init() {
         this._super(...arguments);
@@ -21,10 +24,10 @@ let DownloadCountPoller = Ember.Object.extend({
     },
 
     poll() {
-        let interval = Ember.testing ? 20 : 2000;
+        let interval = testing ? 20 : 2000;
         let runId = run.later(this, function () {
             this.downloadCounter();
-            if (!Ember.testing) {
+            if (!testing) {
                 this.poll();
             }
         }, interval);
@@ -42,14 +45,15 @@ let DownloadCountPoller = Ember.Object.extend({
             }
 
             this.set('count', count);
-        }).catch(() => {
+        }).catch((error) => {
             this.set('count', '');
+            this.get('notifications').showAPIError(error);
         });
     }
 });
 
 export default Route.extend({
-    ghostPaths: service('ghost-paths'),
+    ghostPaths: injectService(),
 
     model() {
         return DownloadCountPoller.create({url: this.get('ghostPaths.count')});

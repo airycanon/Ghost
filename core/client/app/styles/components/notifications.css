@@ -103,6 +103,25 @@
     background: color(var(--green) lightness(+40%));
 }
 
+/* Schedule notification top
+/* ---------------------------------------------------------- */
+
+.gh-notification-schedule {
+    display: inline-block;
+    margin: 0;
+    padding: 7px 10px;
+    width: auto;
+    border: var(--lightgrey) 1px solid;
+    border-radius: 2px;
+    box-shadow: none;
+    vertical-align: middle;
+    line-height: 1.3em;
+}
+
+.gh-notification-schedule:hover {
+    cursor: default;
+}
+
 /* Alerts
 /* ---------------------------------------------------------- */
 
@@ -115,7 +134,7 @@
 
 /* Base alert style */
 .gh-alert {
-    z-index: 1000;
+    z-index: 9999;
     flex-grow: 1;
     display: flex;
     justify-content: space-between;

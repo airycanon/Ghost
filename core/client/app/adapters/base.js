@@ -1,11 +1,8 @@
-import Ember from 'ember';
+import injectService from 'ember-service/inject';
 import RESTAdapter from 'ember-data/adapters/rest';
-import ghostPaths from 'ghost/utils/ghost-paths';
+import ghostPaths from 'ghost-admin/utils/ghost-paths';
 import DataAdapterMixin from 'ember-simple-auth/mixins/data-adapter-mixin';
-
-const {
-    inject: {service}
-} = Ember;
+import config from 'ghost-admin/config/environment';
 
 export default RESTAdapter.extend(DataAdapterMixin, {
     authorizer: 'authorizer:oauth2',
@@ -13,7 +10,11 @@ export default RESTAdapter.extend(DataAdapterMixin, {
     host: window.location.origin,
     namespace: ghostPaths().apiRoot.slice(1),
 
-    session: service(),
+    session: injectService(),
+
+    headers: {
+        'X-Ghost-Version': config.APP.version
+    },
 
     shouldBackgroundReloadRecord() {
         return false;
@@ -45,7 +46,6 @@ export default RESTAdapter.extend(DataAdapterMixin, {
         if (status === 401) {
             if (this.get('session.isAuthenticated')) {
                 this.get('session').invalidate();
-                return; // prevent error from bubbling because invalidate is async
             }
         }
 

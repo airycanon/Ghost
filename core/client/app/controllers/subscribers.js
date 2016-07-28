@@ -1,16 +1,14 @@
-import Ember from 'ember';
+import $ from 'jquery';
+import {assign} from 'ember-platform';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import Controller from 'ember-controller';
+
 import Table from 'ember-light-table';
-import PaginationMixin from 'ghost/mixins/pagination';
-import ghostPaths from 'ghost/utils/ghost-paths';
+import PaginationMixin from 'ghost-admin/mixins/pagination';
+import ghostPaths from 'ghost-admin/utils/ghost-paths';
 
-const {
-    $,
-    assign,
-    computed,
-    inject: {service}
-} = Ember;
-
-export default Ember.Controller.extend(PaginationMixin, {
+export default Controller.extend(PaginationMixin, {
 
     queryParams: ['order', 'direction'],
     order: 'created_at',
@@ -22,7 +20,7 @@ export default Ember.Controller.extend(PaginationMixin, {
     table: null,
     subscriberToDelete: null,
 
-    session: service(),
+    session: injectService(),
 
     // paginationSettings is replaced by the pagination mixin so we need a
     // getter/setter CP here so that we don't lose the dynamic order param
@@ -56,7 +54,7 @@ export default Ember.Controller.extend(PaginationMixin, {
             ascending: direction === 'asc'
         }, {
             label: 'Subscription Date',
-            valuePath: 'createdAt',
+            valuePath: 'createdAtUTC',
             format(value) {
                 return value.format('MMMM DD, YYYY');
             },
@@ -110,7 +108,7 @@ export default Ember.Controller.extend(PaginationMixin, {
 
             if (column.sorted) {
                 this.setProperties({
-                    order: column.get('valuePath').trim().underscore(),
+                    order: column.get('valuePath').trim().replace(/UTC$/, '').underscore(),
                     direction: column.ascending ? 'asc' : 'desc'
                 });
                 table.setRows([]);

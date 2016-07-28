@@ -1,11 +1,12 @@
 import Ember from 'ember';
-import {formatMarkdown} from 'ghost/helpers/gh-format-markdown';
+import Component from 'ember-component';
+import EmberObject from 'ember-object';
+import run from 'ember-runloop';
+import {A as emberA} from 'ember-array/utils';
+import {formatMarkdown} from 'ghost-admin/helpers/gh-format-markdown';
 
-const {
-    Component,
-    run,
-    uuid
-} = Ember;
+// ember-cli-shims doesn't export uuid
+const {uuid} = Ember;
 
 export default Component.extend({
     _scrollWrapper: null,
@@ -14,7 +15,7 @@ export default Component.extend({
 
     init() {
         this._super(...arguments);
-        this.set('imageUploadComponents', Ember.A([]));
+        this.set('imageUploadComponents', emberA([]));
         this.buildPreviewHTML();
     },
 
@@ -58,7 +59,7 @@ export default Component.extend({
         let components = this.get('imageUploadComponents');
 
         if (dropzones.length !== components.length) {
-            components = Ember.A([]);
+            components = emberA([]);
             this.set('imageUploadComponents', components);
         }
 
@@ -66,22 +67,29 @@ export default Component.extend({
             let el = oldEl.cloneNode(true);
             let component = components[i];
             let uploadTarget = el.querySelector('.js-upload-target');
+            let altTextWrapper = oldEl.querySelector('.js-drop-zone .description strong');
             let id = uuid();
             let destinationElementId = `image-uploader-${id}`;
-            let src;
+            let src, altText;
 
             if (uploadTarget) {
                 src = uploadTarget.getAttribute('src');
             }
 
+            if (altTextWrapper) {
+                altText = altTextWrapper.innerHTML;
+            }
+
             if (component) {
                 component.set('destinationElementId', destinationElementId);
                 component.set('src', src);
+                component.set('altText', altText);
             } else {
-                let imageUpload = Ember.Object.create({
+                let imageUpload = EmberObject.create({
                     destinationElementId,
                     id,
                     src,
+                    altText,
                     index: i
                 });
 

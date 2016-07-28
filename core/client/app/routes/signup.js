@@ -1,22 +1,22 @@
-import Ember from 'ember';
+import Route from 'ember-route';
+import RSVP from 'rsvp';
+import injectService from 'ember-service/inject';
+import EmberObject from 'ember-object';
+
 import DS from 'ember-data';
 import Configuration from 'ember-simple-auth/configuration';
-import styleBody from 'ghost/mixins/style-body';
+import styleBody from 'ghost-admin/mixins/style-body';
 
-const {
-    Route,
-    RSVP: {Promise},
-    inject: {service}
-} = Ember;
+const {Promise} = RSVP;
 const {Errors} = DS;
 
 export default Route.extend(styleBody, {
     classNames: ['ghost-signup'],
 
-    ghostPaths: service('ghost-paths'),
-    notifications: service(),
-    session: service(),
-    ajax: service(),
+    ghostPaths: injectService(),
+    notifications: injectService(),
+    session: injectService(),
+    ajax: injectService(),
 
     beforeModel() {
         this._super(...arguments);
@@ -28,7 +28,7 @@ export default Route.extend(styleBody, {
     },
 
     model(params) {
-        let model = Ember.Object.create();
+        let model = EmberObject.create();
         let re = /^(?:[A-Za-z0-9_\-]{4})*(?:[A-Za-z0-9_\-]{2}|[A-Za-z0-9_\-]{3})?$/;
         let email,
             tokenText;

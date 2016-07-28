@@ -5,11 +5,14 @@ import {
     it
 } from 'mocha';
 import Ember from 'ember';
-import ValidationEngine from 'ghost/mixins/validation-engine';
+import ValidationEngine from 'ghost-admin/mixins/validation-engine';
 
-const {run} = Ember;
+const {
+    run,
+    Object: EmberObject
+} = Ember;
 
-const Subscriber = Ember.Object.extend(ValidationEngine, {
+const Subscriber = EmberObject.extend(ValidationEngine, {
     validationType: 'subscriber',
 
     email: null
@@ -19,8 +22,6 @@ describe('Unit: Validator: subscriber', function () {
     it('validates email by default', function () {
         let subscriber = Subscriber.create({});
         let properties = subscriber.get('validators.subscriber.properties');
-
-        console.log(subscriber);
 
         expect(properties, 'properties').to.include('email');
     });

@@ -2,7 +2,29 @@
 import Ember from 'ember';
 import Mirage from 'ember-cli-mirage';
 
-const {$, isBlank} = Ember;
+const {
+    $,
+    isBlank,
+    String: {dasherize}
+} = Ember;
+
+/* jshint unused:false */
+function maintenanceResponse() {
+    return new Mirage.Response(503, {}, {
+        errors: [{
+            errorType: 'Maintenance'
+        }]
+    });
+}
+
+function versionMismatchResponse() {
+    return new Mirage.Response(400, {}, {
+        errors: [{
+            errorType: 'VersionMismatchError'
+        }]
+    });
+}
+/* jshint unused:true */
 
 function paginatedResponse(modelName, allModels, request) {
     let page = +request.queryParams.page || 1;
@@ -118,7 +140,7 @@ export default function () {
     this.timing = 400;      // delay for each request, automatically set to 0 during testing
 
     // Mock endpoints here to override real API requests during development
-    mockSubscribers(this);
+    // this.put('/posts/:id/', versionMismatchResponse);
 
     // keep this line, it allows all other API requests to hit the real server
     this.passthrough();
@@ -133,6 +155,7 @@ export function testConfig() {
     // this.urlPrefix = '';    // make this `http://localhost:8080`, for example, if your API is on a different server
     this.namespace = 'ghost/api/v0.1';    // make this `api`, for example, if your API is namespaced
     // this.timing = 400;      // delay for each request, automatically set to 0 during testing
+    // this.logging = true;
 
     /* Authentication ------------------------------------------------------- */
 
@@ -207,6 +230,34 @@ export function testConfig() {
         return response;
     });
 
+    this.get('/posts/:id/', function (db, request) {
+        let {id} = request.params;
+        let post = db.posts.find(id);
+
+        if (!post) {
+            return new Mirage.Response(404, {}, {
+                errors: [{
+                    errorType: 'NotFoundError',
+                    message: 'Post not found.'
+                }]
+            });
+        } else {
+            return {posts: [post]};
+        }
+    });
+
+    this.put('/posts/:id/', function (db, request) {
+        let {id} = request.params;
+        let [attrs] = JSON.parse(request.requestBody).posts;
+        delete attrs.id;
+
+        let post = db.posts.update(id, attrs);
+
+        return {
+            posts: [post]
+        };
+    });
+
     this.del('/posts/:id/', function (db, request) {
         db.posts.remove(request.params.id);
 
@@ -264,12 +315,22 @@ export function testConfig() {
         return {};
     });
 
+    /* Configuration -------------------------------------------------------- */
+
+    this.get('/configuration/timezones/', function (db) {
+        return {
+            configuration: [{
+                timezones: db.timezones
+            }]
+        };
+    });
+
     /* Slugs ---------------------------------------------------------------- */
 
     this.get('/slugs/post/:slug/', function (db, request) {
         return {
             slugs: [
-                {slug: Ember.String.dasherize(decodeURIComponent(request.params.slug))}
+                {slug: dasherize(decodeURIComponent(request.params.slug))}
             ]
         };
     });
@@ -277,7 +338,7 @@ export function testConfig() {
     this.get('/slugs/user/:slug/', function (db, request) {
         return {
             slugs: [
-                {slug: Ember.String.dasherize(decodeURIComponent(request.params.slug))}
+                {slug: dasherize(decodeURIComponent(request.params.slug))}
             ]
         };
     });
@@ -420,12 +481,19 @@ export function testConfig() {
 
     this.put('/users/:id/', function (db, request) {
         let {id} = request.params;
-        let [attrs] = JSON.parse(request.requestBody).users;
-        let record = db.users.update(id, attrs);
 
-        return {
-            user: record
-        };
+        if (id === 'password') {
+            return {
+                password: [{message: 'Password changed successfully.'}]
+            };
+        } else {
+            let [attrs] = JSON.parse(request.requestBody).users;
+            let record = db.users.update(id, attrs);
+
+            return {
+                user: record
+            };
+        }
     });
 
     /* External sites ------------------------------------------------------- */

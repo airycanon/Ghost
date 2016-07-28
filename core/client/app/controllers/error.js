@@ -1,6 +1,5 @@
-import Ember from 'ember';
-
-const {Controller, computed} = Ember;
+import Controller from 'ember-controller';
+import computed from 'ember-computed';
 
 export default Controller.extend({
 
@@ -15,6 +14,6 @@ export default Controller.extend({
             return 'Page not found';
         }
 
-        return this.get('content.statusText') !== 'error' ? this.get('content.statusText') : '内部服务器错误';
+        return this.get('content.statusText') !== 'error' ? this.get('content.statusText') : 'Internal Server Error';
     })
 });

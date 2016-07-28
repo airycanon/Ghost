@@ -1,12 +1,6 @@
-import Ember from 'ember';
-import ModalComponent from 'ghost/components/modals/base';
-
-const {
-    computed,
-    inject: {service}
-} = Ember;
-
-const {alias} = computed;
+import {alias} from 'ember-computed';
+import injectService from 'ember-service/inject';
+import ModalComponent from 'ghost-admin/components/modals/base';
 
 export default ModalComponent.extend({
 
@@ -14,8 +8,8 @@ export default ModalComponent.extend({
 
     post: alias('model'),
 
-    notifications: service(),
-    routing: service('-routing'),
+    notifications: injectService(),
+    routing: injectService('-routing'),
 
     _deletePost() {
         let post = this.get('post');
@@ -35,8 +29,8 @@ export default ModalComponent.extend({
         this.get('routing').transitionTo('posts');
     },
 
-    _failure() {
-        this.get('notifications').showAlert('Your post could not be deleted. Please try again.', {type: 'error', key: 'post.delete.failed'});
+    _failure(error) {
+        this.get('notifications').showAPIError(error, {key: 'post.delete.failed'});
     },
 
     actions: {
@@ -45,8 +39,8 @@ export default ModalComponent.extend({
 
             this._deletePost().then(() => {
                 this._success();
-            }, () => {
-                this._failure();
+            }, (error) => {
+                this._failure(error);
             }).finally(() => {
                 this.send('closeModal');
             });

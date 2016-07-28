@@ -5,13 +5,12 @@ import {
     it
 } from 'mocha';
 import sinon from 'sinon';
-import Ember from 'ember';
-// import validator from 'ghost/validators/tag-settings';
-import ValidationEngine from 'ghost/mixins/validation-engine';
+import run from 'ember-runloop';
+import EmberObject from 'ember-object';
+// import validator from 'ghost-admin/validators/tag-settings';
+import ValidationEngine from 'ghost-admin/mixins/validation-engine';
 
-const {run} = Ember;
-
-const Tag = Ember.Object.extend(ValidationEngine, {
+const Tag = EmberObject.extend(ValidationEngine, {
     validationType: 'tag',
 
     name: null,

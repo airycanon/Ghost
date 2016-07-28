@@ -1,11 +1,8 @@
-import Ember from 'ember';
-import DropdownMixin from 'ghost/mixins/dropdown-mixin';
-
-const {
-    Component,
-    computed,
-    inject: {service}
-} = Ember;
+import Component from 'ember-component';
+import computed from 'ember-computed';
+import injectService from 'ember-service/inject';
+import run from 'ember-runloop';
+import DropdownMixin from 'ghost-admin/mixins/dropdown-mixin';
 
 export default Component.extend(DropdownMixin, {
     classNames: 'dropdown',
@@ -25,7 +22,7 @@ export default Component.extend(DropdownMixin, {
         return this.get('isOpen') && !this.get('closing');
     }),
 
-    dropdown: service(),
+    dropdown: injectService(),
 
     open() {
         this.set('isOpen', true);
@@ -42,7 +39,7 @@ export default Component.extend(DropdownMixin, {
 
         this.$().on('animationend webkitAnimationEnd oanimationend MSAnimationEnd', (event) => {
             if (event.originalEvent.animationName === 'fade-out') {
-                Ember.run(this, function () {
+                run(this, function () {
                     if (this.get('closing')) {
                         this.set('isOpen', false);
                         this.set('closing', false);

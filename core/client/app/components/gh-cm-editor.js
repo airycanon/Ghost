@@ -1,12 +1,15 @@
 /* global CodeMirror */
-import Ember from 'ember';
+import Component from 'ember-component';
+import run, {bind, scheduleOnce} from 'ember-runloop';
+import injectService from 'ember-service/inject';
 
-const {Component} = Ember;
+import boundOneWay from 'ghost-admin/utils/bound-one-way';
+import {InvokeActionMixin} from 'ember-invoke-action';
 
-export default Component.extend({
+const CmEditorComponent =  Component.extend(InvokeActionMixin, {
     classNameBindings: ['isFocused:focused'],
 
-    value: '', // make sure a value exists
+    _value: boundOneWay('value'), // make sure a value exists
     isFocused: false,
 
     // options for the editor
@@ -17,20 +20,32 @@ export default Component.extend({
 
     _editor: null, // reference to CodeMirror editor
 
+    lazyLoader: injectService(),
+
     didInsertElement() {
         this._super(...arguments);
 
-        let options = this.getProperties('lineNumbers', 'indentUnit', 'mode', 'theme');
-        let editor = new CodeMirror(this.get('element'), options);
+        this.get('lazyLoader').loadStyle('codemirror', 'codemirror/codemirror.css');
 
-        editor.getDoc().setValue(this.get('value'));
+        this.get('lazyLoader').loadScript('codemirror', 'codemirror/codemirror.js').then(() => {
+            scheduleOnce('afterRender', this, function () {
+                this._initCodeMirror();
+            });
+        });
+    },
+
+    _initCodeMirror() {
+        let options = this.getProperties('lineNumbers', 'indentUnit', 'mode', 'theme');
+        let editor = new CodeMirror(this.element, options);
+
+        editor.getDoc().setValue(this.get('_value'));
 
         // events
-        editor.on('focus', Ember.run.bind(this, 'set', 'isFocused', true));
-        editor.on('blur', Ember.run.bind(this, 'set', 'isFocused', false));
+        editor.on('focus', bind(this, 'set', 'isFocused', true));
+        editor.on('blur', bind(this, 'set', 'isFocused', false));
         editor.on('change', () => {
-            Ember.run(this, function () {
-                this.set('value', editor.getDoc().getValue());
+            run(this, function () {
+                this.invokeAction('update', editor.getDoc().getValue());
             });
         });
 
@@ -45,3 +60,9 @@ export default Component.extend({
         this._editor = null;
     }
 });
+
+CmEditorComponent.reopenClass({
+    positionalParams: ['value']
+});
+
+export default CmEditorComponent;

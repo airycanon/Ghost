@@ -1,12 +1,17 @@
 /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
 import Ember from 'ember';
-import ApplicationSerializer from 'ghost/serializers/application';
+import ApplicationSerializer from 'ghost-admin/serializers/application';
 import EmbeddedRecordsMixin from 'ember-data/serializers/embedded-records-mixin';
+
+const {String: {pluralize}} = Ember;
 
 export default ApplicationSerializer.extend(EmbeddedRecordsMixin, {
     // settings for the EmbeddedRecordsMixin.
     attrs: {
-        tags: {embedded: 'always'}
+        tags: {embedded: 'always'},
+        publishedAtUTC: {key: 'published_at'},
+        createdAtUTC: {key: 'created_at'},
+        updatedAtUTC: {key: 'updated_at'}
     },
 
     normalize(model, hash, prop) {
@@ -22,7 +27,7 @@ export default ApplicationSerializer.extend(EmbeddedRecordsMixin, {
 
     normalizeSingleResponse(store, primaryModelClass, payload) {
         let root = this.keyForAttribute(primaryModelClass.modelName);
-        let pluralizedRoot = Ember.String.pluralize(primaryModelClass.modelName);
+        let pluralizedRoot = pluralize(primaryModelClass.modelName);
 
         payload[root] = payload[pluralizedRoot][0];
         delete payload[pluralizedRoot];
@@ -39,7 +44,7 @@ export default ApplicationSerializer.extend(EmbeddedRecordsMixin, {
         options.includeId = true;
 
         // We have a plural root in the API
-        let root = Ember.String.pluralize(type.modelName);
+        let root = pluralize(type.modelName);
         let data = this.serialize(record, options);
 
         // Properties that exist on the model but we don't want sent in the payload

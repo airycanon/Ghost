@@ -5,12 +5,11 @@ import {
   it
 } from 'ember-mocha';
 import hbs from 'htmlbars-inline-precompile';
-import Ember from 'ember';
+import run from 'ember-runloop';
+import Service from 'ember-service';
+import {A as emberA} from 'ember-array/utils';
 
-const {run} = Ember;
-const emberA = Ember.A;
-
-let notificationsStub = Ember.Service.extend({
+let notificationsStub = Service.extend({
     alerts: emberA()
 });
 

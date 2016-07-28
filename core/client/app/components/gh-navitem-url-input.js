@@ -1,7 +1,7 @@
-import Ember from 'ember';
-import {invokeAction} from 'ember-invoke-action';
-
-const {TextField, computed, run} = Ember;
+import TextField from 'ember-components/text-field';
+import computed from 'ember-computed';
+import run from 'ember-runloop';
+import {InvokeActionMixin} from 'ember-invoke-action';
 
 let joinUrlParts = function (url, path) {
     if (path[0] !== '/' && url.slice(-1) !== '/') {
@@ -19,7 +19,7 @@ let isRelative = function (url) {
     return !url.match(/\s/) && !validator.isURL(url) && !url.match(/^(\/\/|#|[a-zA-Z0-9\-]+:)/);
 };
 
-export default TextField.extend({
+export default TextField.extend(InvokeActionMixin, {
     classNames: 'gh-input',
 
     isBaseUrl: computed('baseUrl', 'value', function () {
@@ -68,7 +68,7 @@ export default TextField.extend({
     },
 
     keyPress(event) {
-        invokeAction(this, 'clearErrors');
+        this.invokeAction('clearErrors');
 
         // enter key
         if (event.keyCode === 13) {
