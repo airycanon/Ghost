@@ -159,7 +159,7 @@
                     {{gh-textarea user.bio id="user-bio" focusOut=(action "validate" "bio" target=user) update=(action (mut user.bio))}}
                     {{gh-error-message errors=user.errors property="bio"}}
                     <p>
-                        关于你的描述，最多200 字
+                        关于您的描述，最多200 字
                         {{gh-count-characters user.bio}}
                     </p>
                 {{/gh-form-group}}
