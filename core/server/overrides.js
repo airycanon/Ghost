@@ -7,5 +7,4 @@ var moment = require('moment-timezone');
  *   - be careful when not working with models, every value from the native JS Date is local TZ
  *   - be careful when you work with date operations, therefor always wrap a date into moment
  */
-moment.locale('zh-CN');
 moment.tz.setDefault('UTC');
