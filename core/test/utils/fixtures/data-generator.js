@@ -1,5 +1,5 @@
 var _             = require('lodash'),
-    uuid          = require('node-uuid'),
+    uuid          = require('uuid'),
     moment        = require('moment'),
     globalUtils   = require('../../../server/utils'),
     DataGenerator = {};
@@ -247,7 +247,8 @@ DataGenerator.Content = {
 
     subscribers: [
         {
-            email: 'subscriber1@test.com'
+            email: 'subscriber1@test.com',
+            post_id: 1
         },
         {
             email: 'subscriber2@test.com'
@@ -264,7 +265,9 @@ DataGenerator.forKnex = (function () {
         roles,
         users,
         roles_users,
-        clients;
+        clients,
+        trustedDomains,
+        subscribers;
 
     function createBasic(overrides) {
         var newObj = _.cloneDeep(overrides);
@@ -430,6 +433,14 @@ DataGenerator.forKnex = (function () {
         createClient({name: 'Ghost Scheduler', slug: 'ghost-scheduler', type: 'web'})
     ];
 
+    trustedDomains = [
+        {
+            uuid: '117084d0-d660-11e6-8b46-f7d235f120db',
+            client_id: 1,
+            trusted_domain: 'https://example.com'
+        }
+    ];
+
     roles_users = [
         {user_id: 1, role_id: 4},
         {user_id: 2, role_id: 1},
@@ -457,6 +468,11 @@ DataGenerator.forKnex = (function () {
         createAppField(DataGenerator.Content.app_fields[1])
     ];
 
+    subscribers = [
+        createBasic(DataGenerator.Content.subscribers[0]),
+        createBasic(DataGenerator.Content.subscribers[1])
+    ];
+
     return {
         createPost: createPost,
         createGenericPost: createGenericPost,
@@ -474,6 +490,7 @@ DataGenerator.forKnex = (function () {
         createToken: createToken,
         createSubscriber: createBasic,
 
+        trustedDomains: trustedDomains,
         posts: posts,
         tags: tags,
         posts_tags: posts_tags,
@@ -482,7 +499,8 @@ DataGenerator.forKnex = (function () {
         roles: roles,
         users: users,
         roles_users: roles_users,
-        clients: clients
+        clients: clients,
+        subscribers: subscribers
     };
 }());
 

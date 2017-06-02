@@ -33,7 +33,6 @@ var crypto   = require('crypto'),
     config   = require('./config'),
     errors   = require('./errors'),
     i18n     = require('./i18n'),
-
     internal = {context: {internal: true}},
     allowedCheckEnvironments = ['development', 'production'],
     checkEndpoint = 'updates.ghost.org',
@@ -63,8 +62,8 @@ function createCustomNotification(message) {
     }
 
     var notification = {
+        status: 'alert',
         type: 'info',
-        location: 'top',
         custom: true,
         uuid: message.id,
         dismissible: true,

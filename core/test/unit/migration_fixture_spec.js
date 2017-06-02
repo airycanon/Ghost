@@ -19,6 +19,7 @@ var should = require('should'),
     fixtures005 = require('../../server/data/migration/fixtures/005'),
     fixtures006 = require('../../server/data/migration/fixtures/006'),
     fixtures007 = require('../../server/data/migration/fixtures/007'),
+    fixtures008 = require('../../server/data/migration/fixtures/008'),
 
     sandbox = sinon.sandbox.create();
 
@@ -953,6 +954,8 @@ describe('Fixtures', function () {
             });
 
             describe('Tasks:', function () {
+                var isPostgres = false;
+
                 it('should have tasks for 006', function () {
                     should.exist(fixtures006);
                     fixtures006.should.be.an.Array().with.lengthOf(1);
@@ -965,12 +968,16 @@ describe('Fixtures', function () {
 
                     beforeEach(function () {
                         configUtils.config.database.isPostgreSQL = function () {
-                            return false;
+                            return isPostgres;
                         };
 
                         sandbox.stub(Date.prototype, 'getTimezoneOffset', function () {
                             return serverTimezoneOffset;
                         });
+                    });
+
+                    afterEach(function () {
+                        isPostgres = false;
                     });
 
                     describe('error cases', function () {
@@ -984,8 +991,9 @@ describe('Fixtures', function () {
                             });
                         });
 
-                        it('server offset is 0', function (done) {
+                        it('server offset is 0 and mysql', function (done) {
                             migrationsSettingsValue = '{}';
+                            configUtils.config.database.client = 'mysql';
 
                             updateClient({}, loggerStub)
                                 .then(function () {
@@ -1054,6 +1062,64 @@ describe('Fixtures', function () {
                             });
 
                             sandbox.stub(api.settings, 'updateSettingsCache').returns(Promise.resolve({}));
+                        });
+
+                        it('pg: server TZ is UTC, only format is changing', function (done) {
+                            createdAt = moment(1464798678537).toDate();
+                            configUtils.config.database.client = 'pg';
+                            isPostgres = true;
+                            serverTimezoneOffset = 0;
+
+                            moment(createdAt).format('YYYY-MM-DD HH:mm:ss').should.eql('2016-06-01 16:31:18');
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    _.each(newModels, function (model) {
+                                        moment(model.get('created_at')).format('YYYY-MM-DD HH:mm:ss').should.eql('2016-06-01 16:31:18');
+                                    });
+
+                                    migrationsSettingsWasUpdated.should.eql(true);
+                                    done();
+                                })
+                                .catch(done);
+                        });
+
+                        it('pg: server TZ is non UTC, only format is changing', function (done) {
+                            createdAt = moment(1464798678537).toDate();
+                            configUtils.config.database.client = 'pg';
+                            isPostgres = true;
+
+                            moment(createdAt).format('YYYY-MM-DD HH:mm:ss').should.eql('2016-06-01 16:31:18');
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    _.each(newModels, function (model) {
+                                        moment(model.get('created_at')).format('YYYY-MM-DD HH:mm:ss').should.eql('2016-06-01 16:31:18');
+                                    });
+
+                                    migrationsSettingsWasUpdated.should.eql(true);
+                                    done();
+                                })
+                                .catch(done);
+                        });
+
+                        it('server offset is 0 and sqlite', function (done) {
+                            serverTimezoneOffset = 0;
+                            createdAt = moment(1464798678537).toDate();
+                            configUtils.config.database.client = 'sqlite3';
+
+                            moment(createdAt).format('YYYY-MM-DD HH:mm:ss').should.eql('2016-06-01 16:31:18');
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    _.each(newModels, function (model) {
+                                        moment(model.get('created_at')).format('YYYY-MM-DD HH:mm:ss').should.eql('2016-06-01 16:31:18');
+                                    });
+
+                                    migrationsSettingsWasUpdated.should.eql(true);
+                                    done();
+                                })
+                                .catch(done);
                         });
 
                         it('sqlite: no UTC update, only format', function (done) {
@@ -1168,6 +1234,162 @@ describe('Fixtures', function () {
                                 done();
                             })
                             .catch(done);
+                    });
+                });
+            });
+        });
+
+        describe('Update to 008', function () {
+            it('should call all the 008 fixture upgrades', function (done) {
+                // Setup
+                // Create a new stub, this will replace sequence, so that db calls don't actually get run
+                var sequenceStub = sandbox.stub(),
+                    sequenceReset = update.__set__('sequence', sequenceStub),
+                    tasks = versioning.getUpdateFixturesTasks('008', loggerStub);
+
+                sequenceStub.returns(Promise.resolve([]));
+
+                update(tasks, loggerStub, {transacting: transactionStub}).then(function (result) {
+                    should.exist(result);
+
+                    loggerStub.info.calledOnce.should.be.true();
+                    loggerStub.warn.called.should.be.false();
+
+                    sequenceStub.calledOnce.should.be.true();
+
+                    sequenceStub.firstCall.calledWith(sinon.match.array, sinon.match.object, loggerStub).should.be.true();
+                    sequenceStub.firstCall.args[0].should.be.an.Array().with.lengthOf(1);
+                    sequenceStub.firstCall.args[0][0].should.be.a.Function().with.property('name', 'fixSqliteFormat');
+
+                    // Reset
+                    sequenceReset();
+                    done();
+                }).catch(done);
+            });
+
+            describe('Tasks:', function () {
+                it('should have tasks for 008', function () {
+                    should.exist(fixtures008);
+                    fixtures008.should.be.an.Array().with.lengthOf(1);
+                });
+
+                describe('01-fix-sqlite-pg-format', function () {
+                    var updateClient = rewire('../../server/data/migration/fixtures/008/01-fix-sqlite-pg-format'),
+                        serverTimezoneOffset = 60,
+                        transfomDatesIntoUTCStub;
+
+                    beforeEach(function () {
+                        sandbox.stub(Date.prototype, 'getTimezoneOffset', function () {
+                            return serverTimezoneOffset;
+                        });
+                    });
+
+                    afterEach(function () {
+                        serverTimezoneOffset = 60;
+                    });
+
+                    describe('success', function () {
+                        beforeEach(function () {
+                            sandbox.stub(models.Settings, 'findOne', function (options) {
+                                if (options.key === 'migrations') {
+                                    return Promise.resolve({attributes: {value: '{"005/02": "2015-09-05T12:39:11Z"}'}});
+                                }
+
+                                return Promise.resolve();
+                            });
+
+                            transfomDatesIntoUTCStub = sandbox.stub().returns(Promise.resolve());
+                            updateClient.__set__('transfomDatesIntoUTC', transfomDatesIntoUTCStub);
+                        });
+
+                        it('sqlite and server TZ is UTC: date format is integer', function (done) {
+                            serverTimezoneOffset = 0;
+                            configUtils.config.database.client = 'sqlite3';
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    models.Settings.findOne.callCount.should.eql(1);
+                                    transfomDatesIntoUTCStub.callCount.should.eql(1);
+                                    done();
+                                })
+                                .catch(done);
+                        });
+
+                        it('postgres and server TZ is UTC', function (done) {
+                            serverTimezoneOffset = 0;
+                            configUtils.config.database.client = 'pg';
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    models.Settings.findOne.callCount.should.eql(1);
+                                    transfomDatesIntoUTCStub.callCount.should.eql(1);
+                                    done();
+                                })
+                                .catch(done);
+                        });
+
+                        it('postgres and server TZ is not UTC', function (done) {
+                            configUtils.config.database.client = 'pg';
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    models.Settings.findOne.callCount.should.eql(1);
+                                    transfomDatesIntoUTCStub.callCount.should.eql(1);
+                                    done();
+                                })
+                                .catch(done);
+                        });
+                    });
+
+                    describe('error', function () {
+                        beforeEach(function () {
+                            sandbox.stub(models.Settings, 'findOne', function (options) {
+                                if (options.key === 'migrations') {
+                                    return Promise.resolve({attributes: {value: '{"006/01": "2015-09-05T12:39:11Z"}'}});
+                                }
+
+                                return Promise.resolve();
+                            });
+
+                            transfomDatesIntoUTCStub = sandbox.stub().returns(Promise.resolve());
+                            updateClient.__set__('transfomDatesIntoUTC', transfomDatesIntoUTCStub);
+                        });
+
+                        it('skip mysql', function (done) {
+                            configUtils.config.database.client = 'mysql';
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    loggerStub.warn.called.should.be.true();
+                                    done();
+                                })
+                                .catch(done);
+                        });
+
+                        it('skip sqlite, when settings migrations is set for 006/01', function (done) {
+                            configUtils.config.database.client = 'sqlite3';
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    models.Settings.findOne.callCount.should.eql(1);
+                                    transfomDatesIntoUTCStub.callCount.should.eql(0);
+                                    loggerStub.warn.called.should.be.true();
+                                    done();
+                                })
+                                .catch(done);
+                        });
+
+                        it('skip postgres, when settings migrations is set for 006/01', function (done) {
+                            configUtils.config.database.client = 'pg';
+                            serverTimezoneOffset = 0;
+
+                            updateClient({}, loggerStub)
+                                .then(function () {
+                                    loggerStub.warn.called.should.be.true();
+                                    done();
+                                })
+                                .catch(done);
+                        });
                     });
                 });
             });

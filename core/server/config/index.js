@@ -3,13 +3,12 @@
 var path          = require('path'),
     Promise       = require('bluebird'),
     chalk         = require('chalk'),
-    crypto        = require('crypto'),
     fs            = require('fs'),
     url           = require('url'),
     _             = require('lodash'),
 
     validator     = require('validator'),
-    readDirectory = require('../utils/read-directory'),
+    generateAssetHash = require('../utils/asset-hash'),
     readThemes    = require('../utils/read-themes'),
     errors        = require('../errors'),
     configUrl     = require('./url'),
@@ -78,10 +77,13 @@ ConfigManager.prototype.init = function (rawConfig) {
     // just the object appropriate for this NODE_ENV
     self.set(rawConfig);
 
+    return Promise.resolve(self._config);
+};
+
+ConfigManager.prototype.loadExtras = function () {
+    var self = this;
+
     return self.loadThemes()
-        .then(function () {
-            return self.loadApps();
-        })
         .then(function () {
             return self._config;
         });
@@ -93,15 +95,6 @@ ConfigManager.prototype.loadThemes = function () {
     return readThemes(self._config.paths.themePath)
         .then(function (result) {
             self._config.paths.availableThemes = result;
-        });
-};
-
-ConfigManager.prototype.loadApps = function () {
-    var self = this;
-
-    return readDirectory(self._config.paths.appPath)
-        .then(function (result) {
-            self._config.paths.availableApps = result;
         });
 };
 
@@ -118,7 +111,18 @@ ConfigManager.prototype.set = function (config) {
         contentPath,
         schedulingPath,
         subdir,
-        assetHash;
+        assetHash,
+        timezone = 'Etc/UTC';
+
+    // CASE: remember existing timezone
+    if (this._config.theme && this._config.theme.timezone) {
+        timezone = this._config.theme.timezone;
+    }
+
+    // CASE: override existing timezone
+    if (config && config.theme && config.theme.timezone) {
+        timezone = config.theme.timezone;
+    }
 
     // Merge passed in config object onto our existing config object.
     // We're using merge here as it doesn't assign `undefined` properties
@@ -135,15 +139,6 @@ ConfigManager.prototype.set = function (config) {
     // Special case for the them.navigation JSON object, which should be overridden not merged
     if (config && config.theme && config.theme.navigation) {
         this._config.theme.navigation = config.theme.navigation;
-    }
-
-    // Special case for theme.timezone, which should be overridden not merged
-    if (config && config.theme && config.theme.timezone) {
-        this._config.theme.timezone = config.theme.timezone;
-    } else {
-        // until we have set the timezone from settings, we use the default
-        this._config.theme = this._config.theme ? this._config.theme : {};
-        this._config.theme.timezone = 'Etc/UTC';
     }
 
     // Protect against accessing a non-existant object.
@@ -170,8 +165,7 @@ ConfigManager.prototype.set = function (config) {
     // Otherwise default to default content path location
     contentPath = this._config.paths.contentPath || path.resolve(appRoot, 'content');
 
-    assetHash = this._config.assetHash ||
-        (crypto.createHash('md5').update(packageInfo.version + Date.now()).digest('hex')).substring(0, 10);
+    assetHash = this._config.assetHash || generateAssetHash();
 
     // read storage adapter from config file or attach default adapter
     this._config.storage = this._config.storage || {};
@@ -208,6 +202,12 @@ ConfigManager.prototype.set = function (config) {
         schedulingPath = path.join(contentPath, '/scheduling/');
     }
 
+    this._config.times = _.merge({
+        cannotScheduleAPostBeforeInMinutes: 2,
+        publishAPostBySchedulerToleranceInMinutes: 2,
+        getImageSizeTimeoutInMS: 5000
+    }, this._config.times || {});
+
     _.merge(this._config, {
         ghostVersion: packageInfo.version,
         paths: {
@@ -225,6 +225,7 @@ ConfigManager.prototype.set = function (config) {
             contentPath:      contentPath,
             themePath:        path.resolve(contentPath, 'themes'),
             appPath:          path.resolve(contentPath, 'apps'),
+            dataPath:         path.resolve(contentPath, 'data'),
             imagesPath:       path.resolve(contentPath, 'images'),
             internalAppPath:  path.join(corePath, '/server/apps/'),
             imagesRelPath:    'content/images',
@@ -233,7 +234,6 @@ ConfigManager.prototype.set = function (config) {
             helperTemplates:  path.join(corePath, '/server/helpers/tpl/'),
 
             availableThemes:  this._config.paths.availableThemes || {},
-            availableApps:    this._config.paths.availableApps || {},
             clientAssets:     path.join(corePath, '/built/assets/')
         },
         maintenance: {},
@@ -243,7 +243,8 @@ ConfigManager.prototype.set = function (config) {
         },
         theme: {
             // normalise the URL by removing any trailing slash
-            url: this._config.url ? this._config.url.replace(/\/$/, '') : ''
+            url: this._config.url ? this._config.url.replace(/\/$/, '') : '',
+            timezone: timezone
         },
         routeKeywords: {
             tag: 'tag',
@@ -270,7 +271,7 @@ ConfigManager.prototype.set = function (config) {
         uploads: {
             subscribers: {
                 extensions: ['.csv'],
-                contentTypes: ['text/csv', 'application/csv']
+                contentTypes: ['text/csv', 'application/csv', 'application/octet-stream']
             },
             images: {
                 extensions: ['.jpg', '.jpeg', '.gif', '.png', '.svg', '.svgz'],
@@ -278,21 +279,17 @@ ConfigManager.prototype.set = function (config) {
             },
             db: {
                 extensions: ['.json', '.zip'],
-                contentTypes: ['application/octet-stream', 'application/json', 'application/zip']
+                contentTypes: ['application/octet-stream', 'application/json', 'application/zip', 'application/x-zip-compressed']
             },
             themes: {
                 extensions: ['.zip'],
-                contentTypes: ['application/zip']
+                contentTypes: ['application/zip', 'application/x-zip-compressed', 'application/octet-stream']
             }
         },
         deprecatedItems: ['updateCheck', 'mail.fromaddress'],
         // create a hash for cache busting assets
         assetHash: assetHash,
-        preloadHeaders: this._config.preloadHeaders || false,
-        times: {
-            cannotScheduleAPostBeforeInMinutes: 2,
-            publishAPostBySchedulerToleranceInMinutes: 2
-        }
+        preloadHeaders: this._config.preloadHeaders || false
     });
 
     // Also pass config object to

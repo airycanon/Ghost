@@ -3,7 +3,7 @@ var Promise       = require('bluebird'),
     fs            = require('fs-extra'),
     path          = require('path'),
     Module        = require('module'),
-    uuid          = require('node-uuid'),
+    uuid          = require('uuid'),
     db            = require('../../server/data/db'),
     migration     = require('../../server/data/migration/'),
     fixtureUtils  = require('../../server/data/migration/fixtures/utils'),
@@ -379,6 +379,10 @@ fixtures = {
         });
     },
 
+    insertTrustedDomains: function insertTrustedDomains() {
+        return db.knex('client_trusted_domains').insert(DataGenerator.forKnex.trustedDomains);
+    },
+
     insertClients: function insertClients() {
         return db.knex('clients').insert(DataGenerator.forKnex.clients);
     },
@@ -436,7 +440,10 @@ toDoList = {
         return function permissionsForObj() { return fixtures.permissionsFor(obj); };
     },
     clients: function insertClients() { return fixtures.insertClients(); },
-    filter: function createFilterParamFixtures() { return filterData(DataGenerator); }
+    filter: function createFilterParamFixtures() { return filterData(DataGenerator); },
+    trusted_domains: function trustedDomains() {
+        return fixtures.insertTrustedDomains();
+    }
 };
 
 /**
@@ -459,7 +466,13 @@ getFixtureOps = function getFixtureOps(toDos) {
     // Database initialisation
     if (toDos.init || toDos.default) {
         fixtureOps.push(function initDB() {
-            return migration.populate({tablesOnly: tablesOnly});
+            return new Promise(function initDb(resolve, reject) {
+                migration.populate({tablesOnly: tablesOnly})
+                    .then(function () {
+                        resolve();
+                    })
+                    .catch(reject);
+            });
         });
 
         delete toDos.default;
